@@ -66,11 +66,14 @@ export default function Home() {
       <div className="menu" id="menu">
         <a href="#">🏠 Home</a>
         <a href="https://full-task-ai.vercel.app/" target="_blank">🤖 AI Tools</a>
+
+        {/* ✅ GitHub APK download link */}
         <a
-          href="https://github.com/stech-hub/bionurseapk-website/releases/download/v1/myapp.apk"
+          href="https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk"
           target="_blank"
+          download
         >
-          📱 Download Android App
+          📱 Download ASKAI Android App
         </a>
 
         {/* Dynamic Courses */}
@@ -115,6 +118,26 @@ export default function Home() {
 
         <a href="#">⚙️ Features</a>
         <a href="#">ℹ️ About ASKAI</a>
+      </div>
+
+      {/* Homepage download button */}
+      <div style={{ textAlign: "center", margin: "15px 0" }}>
+        <a
+          href="https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk"
+          download
+          style={{
+            background: "linear-gradient(135deg,#f4c430,#c1121f)",
+            color: "white",
+            padding: "12px 25px",
+            borderRadius: "12px",
+            fontWeight: "700",
+            textDecoration: "none",
+            display: "inline-block",
+            boxShadow: "0 4px 12px rgba(0,0,0,.2)",
+          }}
+        >
+          📱 Download ASKAI App
+        </a>
       </div>
 
       {/* Chat */}
