@@ -32,6 +32,26 @@ export default function Home() {
     const newMessages = [...messages, { type: "user", text: msg }];
     setMessages(newMessages);
 
+    const lowerMsg = msg.toLowerCase();
+
+    // Custom creator response
+    if (
+      lowerMsg.includes("who created you") ||
+      lowerMsg.includes("who made you") ||
+      lowerMsg.includes("who is your creator") ||
+      lowerMsg.includes("who is your owner") ||
+      lowerMsg.includes("creator")
+    ) {
+      const response = `
+Akin S. Sokpah from Liberia created me 🇱🇷
+💬 WhatsApp: [Message me](https://wa.me/231777789356)
+📘 Facebook: [Follow me or contact for websites](https://www.facebook.com/profile.php?id=61583456361691)
+      `;
+      setMessages([...newMessages, { type: "ai", text: response }]);
+      return;
+    }
+
+    // Default AI API
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
