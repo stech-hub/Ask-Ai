@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import "../styles/globals.css";
 
 export default function Home() {
   const [messages, setMessages] = useState([
@@ -11,7 +10,6 @@ export default function Home() {
   const [input, setInput] = useState("");
   const chatRef = useRef();
 
-  // Dynamic Courses Menu State
   const [openCourses, setOpenCourses] = useState(false);
   const [openYear, setOpenYear] = useState(null);
 
@@ -61,17 +59,13 @@ export default function Home() {
       {/* Header */}
       <div className="header">
         <h1>ASKAI</h1>
-        <div className="menu-btn" onClick={toggleMenu}>
-          ☰
-        </div>
+        <div className="menu-btn" onClick={toggleMenu}>☰</div>
       </div>
 
       {/* Menu */}
       <div className="menu" id="menu">
         <a href="#">🏠 Home</a>
-        <a href="https://full-task-ai.vercel.app/" target="_blank">
-          🤖 AI Tools
-        </a>
+        <a href="https://full-task-ai.vercel.app/" target="_blank">🤖 AI Tools</a>
         <a
           href="https://github.com/stech-hub/bionurseapk-website/releases/download/v1/myapp.apk"
           target="_blank"
@@ -79,7 +73,7 @@ export default function Home() {
           📱 Download Android App
         </a>
 
-        {/* Dynamic Courses Section */}
+        {/* Dynamic Courses */}
         <div>
           <a
             href="#!"
@@ -124,7 +118,7 @@ export default function Home() {
       </div>
 
       {/* Chat */}
-      <div className="chat" id="chat" ref={chatRef}>
+      <div className="chat" ref={chatRef}>
         {messages.map((msg, idx) => (
           <div key={idx} className={`msg ${msg.type}`}>
             {msg.text.split("\n").map((line, i) => (
@@ -146,14 +140,7 @@ export default function Home() {
             (e.preventDefault(), sendMessage(input), setInput(""))
           }
         />
-        <button
-          onClick={() => {
-            sendMessage(input);
-            setInput("");
-          }}
-        >
-          Send
-        </button>
+        <button onClick={() => { sendMessage(input); setInput(""); }}>Send</button>
       </div>
 
       {/* Footer */}
