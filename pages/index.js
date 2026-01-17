@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import Head from "next/head";
 
 export default function Home() {
   const [messages, setMessages] = useState([
@@ -55,135 +56,130 @@ export default function Home() {
   };
 
   return (
-    <div className="app">
-      {/* Header */}
-      <div className="header">
-        <h1>ASKAI</h1>
-        <div className="menu-btn" onClick={toggleMenu}>☰</div>
-      </div>
+    <>
+      <Head>
+        <meta
+          name="google-site-verification"
+          content="Xph8kvaL-aAkTHe30pd74SqDHgdUFGDx7p3TLie_LTI"
+        />
+        <title>ASKAI – AI Chat & Learning Assistant</title>
+        <meta
+          name="description"
+          content="ASKAI lets you chat with AI, learn computer science courses, and download Android apps."
+        />
+        <meta name="robots" content="index, follow" />
+      </Head>
 
-      {/* Menu */}
-      <div className="menu" id="menu">
-        <a href="#">🏠 Home</a>
-        <a href="https://full-task-ai.vercel.app/" target="_blank">🤖 AI Tools</a>
-
-        {/* Existing Android App link (unchanged) */}
-        <a
-          href="https://github.com/stech-hub/bionurseapk-website/releases/download/v1/myapp.apk"
-          target="_blank"
-        >
-          📱 Download Android App
-        </a>
-
-        {/* ✅ New ASKAI APK download link */}
-        <a
-          href="https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk"
-          target="_blank"
-          download
-        >
-          📱 Download ASKAI App
-        </a>
-
-        {/* Dynamic Courses */}
-        <div>
-          <a
-            href="#!"
-            onClick={() => setOpenCourses(!openCourses)}
-            style={{ fontWeight: "700" }}
-          >
-            🎓 Free CS Courses {openCourses ? "▲" : "▼"}
-          </a>
-
-          {openCourses &&
-            Object.keys(courses).map((year) => (
-              <div key={year} style={{ paddingLeft: "15px" }}>
-                <a
-                  href="#!"
-                  onClick={() =>
-                    setOpenYear(openYear === year ? null : year)
-                  }
-                  style={{ fontWeight: "500" }}
-                >
-                  {year} {openYear === year ? "▲" : "▼"}
-                </a>
-
-                {openYear === year &&
-                  courses[year].map((course) => (
-                    <a
-                      href="#!"
-                      key={course}
-                      style={{ paddingLeft: "20px", fontSize: "0.9rem" }}
-                      onClick={() =>
-                        sendMessage(`Explain ${course} in simple terms.`)
-                      }
-                    >
-                      {course}
-                    </a>
-                  ))}
-              </div>
-            ))}
+      <div className="app">
+        {/* Header */}
+        <div className="header">
+          <h1>ASKAI</h1>
+          <div className="menu-btn" onClick={toggleMenu}>☰</div>
         </div>
 
-        <a href="#">⚙️ Features</a>
-        <a href="#">ℹ️ About ASKAI</a>
-      </div>
+        {/* Menu */}
+        <div className="menu" id="menu">
+          <a href="#">🏠 Home</a>
+          <a href="https://full-task-ai.vercel.app/" target="_blank">🤖 AI Tools</a>
 
-      {/* Homepage download button for new ASKAI APK */}
-      <div style={{ textAlign: "center", margin: "15px 0" }}>
-        <a
-          href="https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk"
-          download
-          style={{
-            background: "linear-gradient(135deg,#f4c430,#c1121f)",
-            color: "white",
-            padding: "12px 25px",
-            borderRadius: "12px",
-            fontWeight: "700",
-            textDecoration: "none",
-            display: "inline-block",
-            boxShadow: "0 4px 12px rgba(0,0,0,.2)",
-          }}
-        >
-          📱 Download ASKAI App
-        </a>
-      </div>
+          {/* Existing App */}
+          <a
+            href="https://github.com/stech-hub/bionurseapk-website/releases/download/v1/myapp.apk"
+            target="_blank"
+          >
+            📱 Download Android App
+          </a>
 
-      {/* Chat */}
-      <div className="chat" ref={chatRef}>
-        {messages.map((msg, idx) => (
-          <div key={idx} className={`msg ${msg.type}`}>
-            {msg.text.split("\n").map((line, i) => (
-              <div key={i}>{line}</div>
-            ))}
+          {/* New ASKAI App */}
+          <a
+            href="https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk"
+            target="_blank"
+            download
+          >
+            📱 Download ASKAI App
+          </a>
+
+          {/* Dynamic Courses */}
+          <div>
+            <a
+              href="#!"
+              onClick={() => setOpenCourses(!openCourses)}
+              style={{ fontWeight: "700" }}
+            >
+              🎓 Free CS Courses {openCourses ? "▲" : "▼"}
+            </a>
+
+            {openCourses &&
+              Object.keys(courses).map((year) => (
+                <div key={year} style={{ paddingLeft: "15px" }}>
+                  <a
+                    href="#!"
+                    onClick={() =>
+                      setOpenYear(openYear === year ? null : year)
+                    }
+                    style={{ fontWeight: "500" }}
+                  >
+                    {year} {openYear === year ? "▲" : "▼"}
+                  </a>
+
+                  {openYear === year &&
+                    courses[year].map((course) => (
+                      <a
+                        href="#!"
+                        key={course}
+                        style={{ paddingLeft: "20px", fontSize: "0.9rem" }}
+                        onClick={() =>
+                          sendMessage(`Explain ${course} in simple terms.`)
+                        }
+                      >
+                        {course}
+                      </a>
+                    ))}
+                </div>
+              ))}
           </div>
-        ))}
-      </div>
 
-      {/* Input */}
-      <div className="input">
-        <textarea
-          placeholder="Ask me anything..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) =>
-            e.key === "Enter" &&
-            !e.shiftKey &&
-            (e.preventDefault(), sendMessage(input), setInput(""))
-          }
-        />
-        <button onClick={() => { sendMessage(input); setInput(""); }}>Send</button>
-      </div>
+          <a href="#">⚙️ Features</a>
+          <a href="#">ℹ️ About ASKAI</a>
+        </div>
 
-      {/* Footer */}
-      <div className="footer">
-        Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷 |{" "}
-        <a
-          href="https://www.facebook.com/profile.php?id=61583456361691"
-          target="_blank"
-        >
-          Facebook
-        </a>
+        {/* Chat */}
+        <div className="chat" ref={chatRef}>
+          {messages.map((msg, idx) => (
+            <div key={idx} className={`msg ${msg.type}`}>
+              {msg.text.split("\n").map((line, i) => (
+                <div key={i}>{line}</div>
+              ))}
+            </div>
+          ))}
+        </div>
+
+        {/* Input */}
+        <div className="input">
+          <textarea
+            placeholder="Ask me anything..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) =>
+              e.key === "Enter" &&
+              !e.shiftKey &&
+              (e.preventDefault(), sendMessage(input), setInput(""))
+            }
+          />
+          <button onClick={() => { sendMessage(input); setInput(""); }}>Send</button>
+        </div>
+
+        {/* Footer */}
+        <div className="footer">
+          Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷 |{" "}
+          <a
+            href="https://www.facebook.com/profile.php?id=61583456361691"
+            target="_blank"
+          >
+            Facebook
+          </a>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
