@@ -34,7 +34,7 @@ export default function Home() {
 
     const lowerMsg = msg.toLowerCase();
 
-    // Custom creator response
+    // Custom creator response with buttons
     if (
       lowerMsg.includes("who created you") ||
       lowerMsg.includes("who made you") ||
@@ -43,11 +43,17 @@ export default function Home() {
       lowerMsg.includes("creator")
     ) {
       const response = `
-Akin S. Sokpah from Liberia created me 🇱🇷
-💬 WhatsApp: [Message me](https://wa.me/231777789356)
-📘 Facebook: [Follow me or contact for websites](https://www.facebook.com/profile.php?id=61583456361691)
+<div>
+  <p>Akin S. Sokpah from Liberia created me 🇱🇷</p>
+  <p>
+    💬 <a href="https://wa.me/231777789356" target="_blank" style="color:white; background:#25D366; padding:6px 12px; border-radius:6px; text-decoration:none;">Message me on WhatsApp</a>
+  </p>
+  <p>
+    📘 <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank" style="color:white; background:#1877F2; padding:6px 12px; border-radius:6px; text-decoration:none;">Follow me on Facebook</a>
+  </p>
+</div>
       `;
-      setMessages([...newMessages, { type: "ai", text: response }]);
+      setMessages([...newMessages, { type: "ai", text: response, isHTML: true }]);
       return;
     }
 
@@ -148,12 +154,31 @@ Akin S. Sokpah from Liberia created me 🇱🇷
             🏫 SMYTHE UNIVERSITY COLLEGE IPORTAL
           </a>
 
+          {/* Contact & Hire Me */}
+          <div style={{ paddingTop: "10px", borderTop: "1px solid #eee" }}>
+            <a
+              href="https://wa.me/231777789356"
+              target="_blank"
+              style={{ color: "white", background: "#25D366", padding: "8px 14px", borderRadius: "6px", display: "inline-block", marginBottom: "6px", textDecoration: "none" }}
+            >
+              💬 Contact Me on WhatsApp
+            </a>
+            <br />
+            <a
+              href="https://www.facebook.com/profile.php?id=61583456361691"
+              target="_blank"
+              style={{ color: "white", background: "#1877F2", padding: "8px 14px", borderRadius: "6px", display: "inline-block", textDecoration: "none" }}
+            >
+              📘 Follow Me on Facebook / Hire Me
+            </a>
+          </div>
+
           {/* Dynamic Courses */}
           <div>
             <a
               href="#!"
               onClick={() => setOpenCourses(!openCourses)}
-              style={{ fontWeight: "700" }}
+              style={{ fontWeight: "700", display: "block", marginTop: "10px" }}
             >
               🎓 Free CS Courses {openCourses ? "▲" : "▼"}
             </a>
@@ -196,9 +221,11 @@ Akin S. Sokpah from Liberia created me 🇱🇷
         <div className="chat" ref={chatRef}>
           {messages.map((msg, idx) => (
             <div key={idx} className={`msg ${msg.type}`}>
-              {msg.text.split("\n").map((line, i) => (
-                <div key={i}>{line}</div>
-              ))}
+              {msg.isHTML ? (
+                <div dangerouslySetInnerHTML={{ __html: msg.text }} />
+              ) : (
+                msg.text.split("\n").map((line, i) => <div key={i}>{line}</div>)
+              )}
             </div>
           ))}
         </div>
