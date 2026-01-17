@@ -58,16 +58,37 @@ export default function Home() {
   return (
     <>
       <Head>
+        {/* Google verification */}
         <meta
           name="google-site-verification"
           content="Xph8kvaL-aAkTHe30pd74SqDHgdUFGDx7p3TLie_LTI"
         />
+
+        {/* SEO */}
         <title>ASKAI – AI Chat & Learning Assistant</title>
         <meta
           name="description"
-          content="ASKAI lets you chat with AI, learn computer science courses, and download Android apps."
+          content="ASKAI lets you chat with AI, learn computer science courses, download Android apps, and access SMYTHE University iPortal."
         />
         <meta name="robots" content="index, follow" />
+
+        {/* Structured data for APK */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: `
+            {
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "ASKAI",
+              "operatingSystem": "ANDROID",
+              "applicationCategory": "Education",
+              "url": "https://ask-ai-pied.vercel.app/",
+              "downloadUrl": "https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk"
+            }
+          `,
+          }}
+        />
       </Head>
 
       <div className="app">
@@ -97,6 +118,14 @@ export default function Home() {
             download
           >
             📱 Download ASKAI App
+          </a>
+
+          {/* SMYTHE University iPortal */}
+          <a
+            href="https://icampus.smythe.telligentgh.com/"
+            target="_blank"
+          >
+            🏫 SMYTHE UNIVERSITY COLLEGE IPORTAL
           </a>
 
           {/* Dynamic Courses */}
