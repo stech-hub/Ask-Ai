@@ -27,18 +27,17 @@ export default function Home() {
     Senior: ["AI & Machine Learning", "Cybersecurity", "Final Year Projects"],
   };
 
-  const sendMessage = async () => {
-    if (!input.trim()) return;
+  const sendMessage = async (msg) => {
+    if (!msg?.trim()) return;
 
-    const newMessages = [...messages, { type: "user", text: input }];
+    const newMessages = [...messages, { type: "user", text: msg }];
     setMessages(newMessages);
-    setInput("");
 
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ message: msg }),
       });
 
       const data = await res.json();
@@ -109,6 +108,9 @@ export default function Home() {
                       href="#!"
                       key={course}
                       style={{ paddingLeft: "20px", fontSize: "0.9rem" }}
+                      onClick={() =>
+                        sendMessage(`Explain ${course} in simple terms.`)
+                      }
                     >
                       {course}
                     </a>
@@ -141,10 +143,17 @@ export default function Home() {
           onKeyDown={(e) =>
             e.key === "Enter" &&
             !e.shiftKey &&
-            (e.preventDefault(), sendMessage())
+            (e.preventDefault(), sendMessage(input), setInput(""))
           }
         />
-        <button onClick={sendMessage}>Send</button>
+        <button
+          onClick={() => {
+            sendMessage(input);
+            setInput("");
+          }}
+        >
+          Send
+        </button>
       </div>
 
       {/* Footer */}
