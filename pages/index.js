@@ -5,14 +5,17 @@ export default function Home() {
   const [messages, setMessages] = useState([
     {
       type: "ai",
-      text: "👋 Welcome to ASKAI\nYour intelligent assistant for learning, productivity, and coding.",
+      text: "👋 Welcome to ASKAI\nYour intelligent assistant for learning, productivity, and global resources.",
     },
   ]);
   const [input, setInput] = useState("");
   const chatRef = useRef();
 
-  const [openCourses, setOpenCourses] = useState(false);
-  const [openYear, setOpenYear] = useState(null);
+  const [openMenuSections, setOpenMenuSections] = useState({});
+
+  const toggleSection = (section) => {
+    setOpenMenuSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  };
 
   const courses = {
     "Freshman 1": ["Computer Basics", "Digital Literacy", "Intro to Programming (Python)"],
@@ -44,13 +47,11 @@ export default function Home() {
   <p>
     📘 <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank" style="color:white; background:#1877F2; padding:6px 12px; border-radius:6px; text-decoration:none;">Follow me on Facebook</a>
   </p>
-</div>
-      `;
+</div>`;
       setMessages([...newMessages, { type: "ai", text: response, isHTML: true }]);
       return;
     }
 
-    // Default AI API
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -76,40 +77,40 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>ASKAI – Free AI Chat, Learning & Coding Assistant</title>
-        <meta name="description" content="ASKAI lets you chat with AI, learn CS courses, download the Android app, and access SMYTHE University iPortal. Created by Akin S. Sokpah from Liberia." />
+        <title>ASKAI – Ultimate AI Assistant & Global Resources</title>
+        <meta name="description" content="ASKAI is your hub for AI chat, CS courses, scholarships, jobs, affiliate programs, Liberia and international resources. Created by Akin S. Sokpah." />
         <meta name="robots" content="index, follow" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="canonical" href="https://ask-ai-pied.vercel.app/" />
 
-        {/* Google verification */}
+        {/* Google Verification */}
         <meta name="google-site-verification" content="Xph8kvaL-aAkTHe30pd74SqDHgdUFGDx7p3TLie_LTI" />
 
-        {/* Open Graph / Facebook */}
-        <meta property="og:title" content="ASKAI – Free AI Assistant for Learning & Coding" />
-        <meta property="og:description" content="Chat with AI, access free CS courses, download the ASKAI Android app, and more!" />
+        {/* Open Graph */}
+        <meta property="og:title" content="ASKAI – Ultimate AI Assistant & Global Resources" />
+        <meta property="og:description" content="Chat with AI, learn CS courses, scholarships, jobs, affiliate programs, Liberia & international resources." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://ask-ai-pied.vercel.app/" />
         <meta property="og:image" content="https://ask-ai-pied.vercel.app/askai-social.png" />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="ASKAI – Free AI Assistant for Learning & Coding" />
-        <meta name="twitter:description" content="Chat with AI, access free CS courses, download the ASKAI Android app, and more!" />
+        <meta name="twitter:title" content="ASKAI – Ultimate AI Assistant & Global Resources" />
+        <meta name="twitter:description" content="Chat with AI, learn CS courses, scholarships, jobs, affiliate programs, Liberia & international resources." />
         <meta name="twitter:image" content="https://ask-ai-pied.vercel.app/askai-social.png" />
         <meta name="twitter:site" content="@AkinSokpah" />
 
         {/* Structured data for APK */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: `
-        {
-          "@context": "https://schema.org",
-          "@type": "SoftwareApplication",
-          "name": "ASKAI",
-          "operatingSystem": "ANDROID",
-          "applicationCategory": "Education",
-          "url": "https://ask-ai-pied.vercel.app/",
-          "downloadUrl": "https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk"
-        }
+          {
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "ASKAI",
+            "operatingSystem": "ANDROID",
+            "applicationCategory": "Education",
+            "url": "https://ask-ai-pied.vercel.app/",
+            "downloadUrl": "https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk"
+          }
         `}} />
       </Head>
 
@@ -119,7 +120,6 @@ export default function Home() {
           <div className="menu-btn" onClick={toggleMenu}>☰</div>
         </div>
 
-        {/* Main Menu */}
         <div className="menu" id="menu" style={{ display: "none" }}>
           <a href="#">🏠 Home</a>
           <a href="https://full-task-ai.vercel.app/" target="_blank">🤖 AI Tools</a>
@@ -133,15 +133,15 @@ export default function Home() {
           <hr />
 
           {/* Courses */}
-          <a href="#!" onClick={() => setOpenCourses(!openCourses)} style={{ fontWeight: "700" }}>
-            🎓 Free CS Courses {openCourses ? "▲" : "▼"}
+          <a href="#!" onClick={() => toggleSection("courses")} style={{ fontWeight: "700" }}>
+            🎓 Free CS Courses {openMenuSections["courses"] ? "▲" : "▼"}
           </a>
-          {openCourses && Object.keys(courses).map((year) => (
+          {openMenuSections["courses"] && Object.keys(courses).map((year) => (
             <div key={year} style={{ paddingLeft: "15px" }}>
-              <a href="#!" onClick={() => setOpenYear(openYear === year ? null : year)}>
-                {year} {openYear === year ? "▲" : "▼"}
+              <a href="#!" onClick={() => toggleSection(year)}>
+                {year} {openMenuSections[year] ? "▲" : "▼"}
               </a>
-              {openYear === year && courses[year].map((course) => (
+              {openMenuSections[year] && courses[year].map((course) => (
                 <a key={course} href="#!" style={{ paddingLeft: "20px", fontSize: "0.9rem" }} onClick={() => sendMessage(`Explain ${course} in simple terms.`)}>
                   {course}
                 </a>
@@ -152,26 +152,78 @@ export default function Home() {
           <hr />
 
           {/* Affiliate Programs */}
-          <a href="https://jumia.com" target="_blank">💰 Affiliate Programs (Jumia)</a>
-          <a href="https://expertnaire.com" target="_blank">💵 Digital Affiliate Marketing</a>
+          <a href="#!" onClick={() => toggleSection("affiliate")} style={{ fontWeight: "700" }}>
+            💰 Affiliate Programs {openMenuSections["affiliate"] ? "▲" : "▼"}
+          </a>
+          {openMenuSections["affiliate"] && (
+            <>
+              <a href="https://jumia.com" target="_blank">Jumia Liberia</a>
+              <a href="https://expertnaire.com" target="_blank">Expertnaire Digital</a>
+              <a href="https://amazon.com" target="_blank">Amazon</a>
+              <a href="https://ebay.com" target="_blank">eBay</a>
+              <a href="https://aliexpress.com" target="_blank">AliExpress</a>
+            </>
+          )}
 
           <hr />
 
           {/* Scholarships */}
-          <a href="https://www.opportunitiesforafricans.com/" target="_blank">🎓 Scholarships for Liberians</a>
-          <a href="https://www.studyabroad.com/" target="_blank">✈️ Travel & Study Abroad</a>
-
-          <hr />
-
-          {/* Liberia Services */}
-          <a href="https://www.orange.com/lr/" target="_blank">📱 Orange Liberia</a>
-          <a href="https://www.lonestarcell.com/" target="_blank">📶 Lonestar MTN Liberia</a>
+          <a href="#!" onClick={() => toggleSection("scholarships")} style={{ fontWeight: "700" }}>
+            🎓 Scholarships {openMenuSections["scholarships"] ? "▲" : "▼"}
+          </a>
+          {openMenuSections["scholarships"] && (
+            <>
+              <a href="https://www.opportunitiesforafricans.com/" target="_blank">Liberia Scholarships</a>
+              <a href="https://www.chevening.org/" target="_blank">Chevening</a>
+              <a href="https://www.fulbrightprogram.org/" target="_blank">Fulbright</a>
+              <a href="https://www.daad.de/" target="_blank">DAAD Germany</a>
+              <a href="https://www.studyabroad.com/" target="_blank">Travel & Study Abroad</a>
+            </>
+          )}
 
           <hr />
 
           {/* Jobs & Freelancing */}
-          <a href="https://www.upwork.com/" target="_blank">🌍 Remote Jobs (Upwork)</a>
-          <a href="https://www.fiverr.com/" target="_blank">🧑‍💻 Freelancing (Fiverr)</a>
+          <a href="#!" onClick={() => toggleSection("jobs")} style={{ fontWeight: "700" }}>
+            🌍 Jobs & Freelancing {openMenuSections["jobs"] ? "▲" : "▼"}
+          </a>
+          {openMenuSections["jobs"] && (
+            <>
+              <a href="https://www.jobliberia.com/" target="_blank">Liberia Jobs</a>
+              <a href="https://www.myjobs.com.lr/" target="_blank">MyJobs Liberia</a>
+              <a href="https://www.upwork.com/" target="_blank">Upwork</a>
+              <a href="https://www.fiverr.com/" target="_blank">Fiverr</a>
+            </>
+          )}
+
+          <hr />
+
+          {/* Telecom & Services */}
+          <a href="#!" onClick={() => toggleSection("telecom")} style={{ fontWeight: "700" }}>
+            📱 Telecom & Services {openMenuSections["telecom"] ? "▲" : "▼"}
+          </a>
+          {openMenuSections["telecom"] && (
+            <>
+              <a href="https://www.orange.com/lr/" target="_blank">Orange Liberia</a>
+              <a href="https://www.lonestarcell.com/" target="_blank">Lonestar MTN Liberia</a>
+              <a href="https://www.africell.com.lr/" target="_blank">Africell Liberia</a>
+            </>
+          )}
+
+          <hr />
+
+          {/* News & Media */}
+          <a href="#!" onClick={() => toggleSection("news")} style={{ fontWeight: "700" }}>
+            📰 News & Media {openMenuSections["news"] ? "▲" : "▼"}
+          </a>
+          {openMenuSections["news"] && (
+            <>
+              <a href="https://frontpageafricaonline.com/" target="_blank">FrontPage Africa</a>
+              <a href="https://thenewdawnliberia.com/" target="_blank">The New Dawn</a>
+              <a href="https://www.bbc.com/news" target="_blank">BBC</a>
+              <a href="https://www.cnn.com/" target="_blank">CNN</a>
+            </>
+          )}
 
           <hr />
 
@@ -181,7 +233,7 @@ export default function Home() {
           <hr />
 
           {/* Contact */}
-          <a href="https://wa.me/231777789356" target="_blank" style={{ color: "white", background: "#25D366", padding: "8px 14px", borderRadius: "6px", display: "inline-block", marginBottom: "6px", textDecoration: "none" }}>💬 Contact WhatsApp</a>
+          <a href="https://wa.me/231777789356" target="_blank" style={{ color: "white", background: "#25D366", padding: "8px 14px", borderRadius: "6px", display: "inline-block", marginBottom: "6px", textDecoration: "none" }}>💬 WhatsApp</a>
           <br />
           <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank" style={{ color: "white", background: "#1877F2", padding: "8px 14px", borderRadius: "6px", display: "inline-block", textDecoration: "none" }}>📘 Facebook / Hire Me</a>
         </div>
@@ -210,7 +262,6 @@ export default function Home() {
           <button onClick={() => { sendMessage(input); setInput(""); }}>Send</button>
         </div>
 
-        {/* Footer */}
         <div className="footer">
           Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷 |{" "}
           <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank">Facebook</a>
