@@ -1,4 +1,3 @@
-// SAME IMPORTS
 import { useState, useRef, useEffect } from "react";
 import Head from "next/head";
 
@@ -14,49 +13,62 @@ export default function Home() {
 
   const [openCourses, setOpenCourses] = useState(false);
   const [openYear, setOpenYear] = useState(null);
-  const [openOpportunities, setOpenOpportunities] = useState(false);
-  const [openWork, setOpenWork] = useState(false);
-  const [openLiberia, setOpenLiberia] = useState(false);
 
   const courses = {
-    "Freshman 1": ["Computer Basics", "Digital Literacy", "Intro to Programming"],
-    "Freshman 2": ["Web Development", "Discrete Math"],
-    Sophomore: ["Data Structures", "Algorithms"],
-    Junior: ["Operating Systems", "Software Engineering"],
-    Senior: ["AI & Machine Learning", "Cybersecurity"],
+    "Freshman 1": [
+      "Computer Basics",
+      "Digital Literacy",
+      "Intro to Programming (Python)",
+    ],
+    "Freshman 2": ["Web Development (HTML, CSS, JS)", "Discrete Math"],
+    Sophomore: ["Data Structures", "Algorithms", "Databases"],
+    Junior: ["Operating Systems", "Software Engineering", "Computer Networks"],
+    Senior: ["AI & Machine Learning", "Cybersecurity", "Final Year Projects"],
   };
 
   const sendMessage = async (msg) => {
     if (!msg?.trim()) return;
+
     const newMessages = [...messages, { type: "user", text: msg }];
     setMessages(newMessages);
 
-    if (msg.toLowerCase().includes("creator")) {
-      setMessages([
-        ...newMessages,
-        {
-          type: "ai",
-          text: `
-Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷<br/>
-💬 <a href="https://wa.me/231777789356" target="_blank">WhatsApp</a><br/>
-📘 <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank">Facebook</a>
-          `,
-          isHTML: true,
-        },
-      ]);
+    const lowerMsg = msg.toLowerCase();
+
+    // Custom creator response with buttons
+    if (
+      lowerMsg.includes("who created you") ||
+      lowerMsg.includes("who made you") ||
+      lowerMsg.includes("who is your creator") ||
+      lowerMsg.includes("who is your owner") ||
+      lowerMsg.includes("creator")
+    ) {
+      const response = `
+<div>
+  <p>Akin S. Sokpah from Liberia created me 🇱🇷</p>
+  <p>
+    💬 <a href="https://wa.me/231777789356" target="_blank" style="color:white; background:#25D366; padding:6px 12px; border-radius:6px; text-decoration:none;">Message me on WhatsApp</a>
+  </p>
+  <p>
+    📘 <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank" style="color:white; background:#1877F2; padding:6px 12px; border-radius:6px; text-decoration:none;">Follow me on Facebook</a>
+  </p>
+</div>
+      `;
+      setMessages([...newMessages, { type: "ai", text: response, isHTML: true }]);
       return;
     }
 
+    // Default AI API
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: msg }),
       });
+
       const data = await res.json();
       setMessages([...newMessages, { type: "ai", text: data.message }]);
-    } catch {
-      setMessages([...newMessages, { type: "ai", text: "❌ Error." }]);
+    } catch (err) {
+      setMessages([...newMessages, { type: "ai", text: "❌ Error contacting AI." }]);
     }
   };
 
@@ -72,83 +84,91 @@ Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷<br/>
   return (
     <>
       <Head>
-        <title>ASKAI – AI Assistant</title>
+        <title>ASKAI – Free AI Chat, Learning & Coding Assistant</title>
+        <meta
+          name="description"
+          content="ASKAI lets you chat with AI, learn Computer Science courses, download the Android app, and access SMYTHE University iPortal. Created by Akin S. Sokpah from Liberia."
+        />
+        <meta name="robots" content="index, follow" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="canonical" href="https://ask-ai-pied.vercel.app/" />
+
+        {/* Google verification */}
+        <meta
+          name="google-site-verification"
+          content="Xph8kvaL-aAkTHe30pd74SqDHgdUFGDx7p3TLie_LTI"
+        />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:title" content="ASKAI – Free AI Assistant for Learning & Coding" />
+        <meta property="og:description" content="Chat with AI, access free CS courses, download the ASKAI Android app, and more!" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://ask-ai-pied.vercel.app/" />
+        <meta property="og:image" content="https://ask-ai-pied.vercel.app/askai-social.png" />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="ASKAI – Free AI Assistant for Learning & Coding" />
+        <meta name="twitter:description" content="Chat with AI, access free CS courses, download the ASKAI Android app, and more!" />
+        <meta name="twitter:image" content="https://ask-ai-pied.vercel.app/askai-social.png" />
+        <meta name="twitter:site" content="@AkinSokpah" />
+
+        {/* Structured data for APK */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: `
+            {
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "ASKAI",
+              "operatingSystem": "ANDROID",
+              "applicationCategory": "Education",
+              "url": "https://ask-ai-pied.vercel.app/",
+              "downloadUrl": "https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk"
+            }
+          `,
+          }}
+        />
       </Head>
 
       <div className="app">
+        {/* Header */}
         <div className="header">
           <h1>ASKAI</h1>
           <div className="menu-btn" onClick={toggleMenu}>☰</div>
         </div>
 
-        <div className="menu" id="menu">
+        {/* Main Menu */}
+        <div className="menu" id="menu" style={{ display: "none" }}>
           <a href="#">🏠 Home</a>
+          <a href="https://full-task-ai.vercel.app/" target="_blank">🤖 AI Tools</a>
 
-          {/* WORK & MONEY */}
-          <a onClick={() => setOpenWork(!openWork)}>
-            💼 Work & Money {openWork ? "▲" : "▼"}
-          </a>
-          {openWork && (
-            <div style={{ paddingLeft: 15 }}>
-              <a href="https://www.upwork.com" target="_blank">Freelancing (Upwork)</a>
-              <a href="https://www.fiverr.com" target="_blank">Fiverr</a>
-              <a href="https://remoteok.com" target="_blank">Remote Jobs</a>
-              <a href="https://jumia.com" target="_blank">Affiliate Marketing</a>
-            </div>
-          )}
+          <hr />
 
-          {/* OPPORTUNITIES */}
-          <a onClick={() => setOpenOpportunities(!openOpportunities)}>
-            🎓 Education & Travel {openOpportunities ? "▲" : "▼"}
-          </a>
-          {openOpportunities && (
-            <div style={{ paddingLeft: 15 }}>
-              <a href="https://opportunitiesforafricans.com" target="_blank">
-                Scholarships Abroad
-              </a>
-              <a href="https://www.coursera.org" target="_blank">
-                Free Certificates
-              </a>
-              <a href="https://www.youthop.com" target="_blank">
-                Global Youth Programs
-              </a>
-            </div>
-          )}
+          {/* Apps */}
+          <a href="https://github.com/stech-hub/bionurseapk-website/releases/download/v1/myapp.apk" target="_blank">📱 Download Android App</a>
+          <a href="https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk" target="_blank">📱 Download ASKAI App</a>
 
-          {/* LIBERIA */}
-          <a onClick={() => setOpenLiberia(!openLiberia)}>
-            🇱🇷 Liberia Resources {openLiberia ? "▲" : "▼"}
-          </a>
-          {openLiberia && (
-            <div style={{ paddingLeft: 15 }}>
-              <a href="https://www.orange.com/en/countries/liberia" target="_blank">
-                Orange Liberia
-              </a>
-              <a href="https://mtn.com" target="_blank">MTN Africa</a>
-              <a href="https://www.emansion.gov.lr/" target="_blank">
-                Government of Liberia
-              </a>
-            </div>
-          )}
+          <hr />
 
-          {/* COURSES */}
-          <a onClick={() => setOpenCourses(!openCourses)}>
+          {/* Courses */}
+          <a href="#!" onClick={() => setOpenCourses(!openCourses)} style={{ fontWeight: "700" }}>
             🎓 Free CS Courses {openCourses ? "▲" : "▼"}
           </a>
           {openCourses &&
             Object.keys(courses).map((year) => (
-              <div key={year} style={{ paddingLeft: 15 }}>
-                <a onClick={() => setOpenYear(openYear === year ? null : year)}>
-                  {year}
+              <div key={year} style={{ paddingLeft: "15px" }}>
+                <a href="#!" onClick={() => setOpenYear(openYear === year ? null : year)}>
+                  {year} {openYear === year ? "▲" : "▼"}
                 </a>
                 {openYear === year &&
                   courses[year].map((course) => (
                     <a
                       key={course}
-                      style={{ paddingLeft: 20 }}
-                      onClick={() =>
-                        sendMessage(`Explain ${course} in simple terms`)
-                      }
+                      href="#!"
+                      style={{ paddingLeft: "20px", fontSize: "0.9rem" }}
+                      onClick={() => sendMessage(`Explain ${course} in simple terms.`)}
                     >
                       {course}
                     </a>
@@ -156,44 +176,75 @@ Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷<br/>
               </div>
             ))}
 
-          <a href="https://github.com" target="_blank">💻 GitHub</a>
-          <a href="https://wa.me/231777789356" target="_blank">
-            💬 Contact / Hire Developer
-          </a>
+          <hr />
+
+          {/* Affiliate Programs */}
+          <a href="https://jumia.com" target="_blank">💰 Affiliate Programs (Jumia)</a>
+          <a href="https://expertnaire.com" target="_blank">💵 Digital Affiliate Marketing</a>
+
+          <hr />
+
+          {/* Scholarships */}
+          <a href="https://www.opportunitiesforafricans.com/" target="_blank">🎓 Scholarships for Liberians</a>
+          <a href="https://www.studyabroad.com/" target="_blank">✈️ Travel & Study Abroad</a>
+
+          <hr />
+
+          {/* Liberia Services */}
+          <a href="https://www.orange.com/lr/" target="_blank">📱 Orange Liberia</a>
+          <a href="https://www.lonestarcell.com/" target="_blank">📶 Lonestar MTN Liberia</a>
+
+          <hr />
+
+          {/* Jobs & Freelancing */}
+          <a href="https://www.upwork.com/" target="_blank">🌍 Remote Jobs (Upwork)</a>
+          <a href="https://www.fiverr.com/" target="_blank">🧑‍💻 Freelancing (Fiverr)</a>
+
+          <hr />
+
+          {/* University */}
+          <a href="https://icampus.smythe.telligentgh.com/" target="_blank">🏫 SMYTHE University iPortal</a>
+
+          <hr />
+
+          {/* Contact */}
+          <a href="https://wa.me/231777789356" target="_blank" style={{ color: "white", background: "#25D366", padding: "8px 14px", borderRadius: "6px", display: "inline-block", marginBottom: "6px", textDecoration: "none" }}>💬 Contact WhatsApp</a>
+          <br />
+          <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank" style={{ color: "white", background: "#1877F2", padding: "8px 14px", borderRadius: "6px", display: "inline-block", textDecoration: "none" }}>📘 Facebook / Hire Me</a>
         </div>
 
+        {/* Chat */}
         <div className="chat" ref={chatRef}>
-          {messages.map((m, i) => (
-            <div key={i} className={`msg ${m.type}`}>
-              {m.isHTML ? (
-                <div dangerouslySetInnerHTML={{ __html: m.text }} />
+          {messages.map((msg, idx) => (
+            <div key={idx} className={`msg ${msg.type}`}>
+              {msg.isHTML ? (
+                <div dangerouslySetInnerHTML={{ __html: msg.text }} />
               ) : (
-                m.text
+                msg.text.split("\n").map((line, i) => <div key={i}>{line}</div>)
               )}
             </div>
           ))}
         </div>
 
+        {/* Input */}
         <div className="input">
           <textarea
             placeholder="Ask me anything..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage(input);
-                setInput("");
-              }
-            }}
+            onKeyDown={(e) =>
+              e.key === "Enter" &&
+              !e.shiftKey &&
+              (e.preventDefault(), sendMessage(input), setInput(""))
+            }
           />
-          <button onClick={() => { sendMessage(input); setInput(""); }}>
-            Send
-          </button>
+          <button onClick={() => { sendMessage(input); setInput(""); }}>Send</button>
         </div>
 
+        {/* Footer */}
         <div className="footer">
-          Created by <strong>Akin S. Sokpah</strong> 🇱🇷
+          Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷 |{" "}
+          <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank">Facebook</a>
         </div>
       </div>
     </>
