@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Apps -->
+  <url><loc>https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk</loc></url>
+  <url><loc>https://github.com/stech-hub/bionurseapk-website/releases/download/v1/myapp.apk</loc></url>
+  <url><loc>https://full-task-ai.vercel.app/</loc></url>
+
+  <!-- Affiliate Programs -->
+  <url><loc>https://jumia.com</loc></url>
+  <url><loc>https://expertnaire.com</loc></url>
+  <url><loc>https://amazon.com</loc></url>
+  <url><loc>https://ebay.com</loc></url>
+  <url><loc>https://aliexpress.com</loc></url>
+
+  <!-- Scholarships -->
+  <url><loc>https://www.opportunitiesforafricans.com/</loc></url>
+  <url><loc>https://www.chevening.org/</loc></url>
+  <url><loc>https://www.fulbrightprogram.org/</loc></url>
+  <url><loc>https://www.daad.de/</loc></url>
+  <url><loc>https://www.studyabroad.com/</loc></url>
+
+  <!-- Jobs & Freelancing -->
+  <url><loc>https://www.jobliberia.com/</loc></url>
+  <url><loc>https://www.myjobs.com.lr/</loc></url>
+  <url><loc>https://www.upwork.com/</loc></url>
+  <url><loc>https://www.fiverr.com/</loc></url>
+
+  <!-- Telecom & Services -->
+  <url><loc>https://www.orange.com/lr/</loc></url>
+  <url><loc>https://www.lonestarcell.com/</loc></url>
+  <url><loc>https://www.africell.com.lr/</loc></url>
+
+  <!-- News & Media -->
+  <url><loc>https://frontpageafricaonline.com/</loc></url>
+  <url><loc>https://thenewdawnliberia.com/</loc></url>
+  <url><loc>https://www.bbc.com/news</loc></url>
+  <url><loc>https://www.cnn.com/</loc></url>
+
+</urlset>
