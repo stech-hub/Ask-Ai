@@ -15,11 +15,7 @@ export default function Home() {
   const [openYear, setOpenYear] = useState(null);
 
   const courses = {
-    "Freshman 1": [
-      "Computer Basics",
-      "Digital Literacy",
-      "Intro to Programming (Python)",
-    ],
+    "Freshman 1": ["Computer Basics", "Digital Literacy", "Intro to Programming (Python)"],
     "Freshman 2": ["Web Development (HTML, CSS, JS)", "Discrete Math"],
     Sophomore: ["Data Structures", "Algorithms", "Databases"],
     Junior: ["Operating Systems", "Software Engineering", "Computer Networks"],
@@ -34,12 +30,9 @@ export default function Home() {
 
     const lowerMsg = msg.toLowerCase();
 
-    // Custom creator response with buttons
     if (
       lowerMsg.includes("who created you") ||
       lowerMsg.includes("who made you") ||
-      lowerMsg.includes("who is your creator") ||
-      lowerMsg.includes("who is your owner") ||
       lowerMsg.includes("creator")
     ) {
       const response = `
@@ -64,10 +57,9 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: msg }),
       });
-
       const data = await res.json();
       setMessages([...newMessages, { type: "ai", text: data.message }]);
-    } catch (err) {
+    } catch {
       setMessages([...newMessages, { type: "ai", text: "❌ Error contacting AI." }]);
     }
   };
@@ -85,19 +77,13 @@ export default function Home() {
     <>
       <Head>
         <title>ASKAI – Free AI Chat, Learning & Coding Assistant</title>
-        <meta
-          name="description"
-          content="ASKAI lets you chat with AI, learn Computer Science courses, download the Android app, and access SMYTHE University iPortal. Created by Akin S. Sokpah from Liberia."
-        />
+        <meta name="description" content="ASKAI lets you chat with AI, learn CS courses, download the Android app, and access SMYTHE University iPortal. Created by Akin S. Sokpah from Liberia." />
         <meta name="robots" content="index, follow" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="canonical" href="https://ask-ai-pied.vercel.app/" />
 
         {/* Google verification */}
-        <meta
-          name="google-site-verification"
-          content="Xph8kvaL-aAkTHe30pd74SqDHgdUFGDx7p3TLie_LTI"
-        />
+        <meta name="google-site-verification" content="Xph8kvaL-aAkTHe30pd74SqDHgdUFGDx7p3TLie_LTI" />
 
         {/* Open Graph / Facebook */}
         <meta property="og:title" content="ASKAI – Free AI Assistant for Learning & Coding" />
@@ -114,26 +100,20 @@ export default function Home() {
         <meta name="twitter:site" content="@AkinSokpah" />
 
         {/* Structured data for APK */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: `
-            {
-              "@context": "https://schema.org",
-              "@type": "SoftwareApplication",
-              "name": "ASKAI",
-              "operatingSystem": "ANDROID",
-              "applicationCategory": "Education",
-              "url": "https://ask-ai-pied.vercel.app/",
-              "downloadUrl": "https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk"
-            }
-          `,
-          }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: `
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "name": "ASKAI",
+          "operatingSystem": "ANDROID",
+          "applicationCategory": "Education",
+          "url": "https://ask-ai-pied.vercel.app/",
+          "downloadUrl": "https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk"
+        }
+        `}} />
       </Head>
 
       <div className="app">
-        {/* Header */}
         <div className="header">
           <h1>ASKAI</h1>
           <div className="menu-btn" onClick={toggleMenu}>☰</div>
@@ -156,25 +136,18 @@ export default function Home() {
           <a href="#!" onClick={() => setOpenCourses(!openCourses)} style={{ fontWeight: "700" }}>
             🎓 Free CS Courses {openCourses ? "▲" : "▼"}
           </a>
-          {openCourses &&
-            Object.keys(courses).map((year) => (
-              <div key={year} style={{ paddingLeft: "15px" }}>
-                <a href="#!" onClick={() => setOpenYear(openYear === year ? null : year)}>
-                  {year} {openYear === year ? "▲" : "▼"}
+          {openCourses && Object.keys(courses).map((year) => (
+            <div key={year} style={{ paddingLeft: "15px" }}>
+              <a href="#!" onClick={() => setOpenYear(openYear === year ? null : year)}>
+                {year} {openYear === year ? "▲" : "▼"}
+              </a>
+              {openYear === year && courses[year].map((course) => (
+                <a key={course} href="#!" style={{ paddingLeft: "20px", fontSize: "0.9rem" }} onClick={() => sendMessage(`Explain ${course} in simple terms.`)}>
+                  {course}
                 </a>
-                {openYear === year &&
-                  courses[year].map((course) => (
-                    <a
-                      key={course}
-                      href="#!"
-                      style={{ paddingLeft: "20px", fontSize: "0.9rem" }}
-                      onClick={() => sendMessage(`Explain ${course} in simple terms.`)}
-                    >
-                      {course}
-                    </a>
-                  ))}
-              </div>
-            ))}
+              ))}
+            </div>
+          ))}
 
           <hr />
 
@@ -232,11 +205,7 @@ export default function Home() {
             placeholder="Ask me anything..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) =>
-              e.key === "Enter" &&
-              !e.shiftKey &&
-              (e.preventDefault(), sendMessage(input), setInput(""))
-            }
+            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), sendMessage(input), setInput(""))}
           />
           <button onClick={() => { sendMessage(input); setInput(""); }}>Send</button>
         </div>
