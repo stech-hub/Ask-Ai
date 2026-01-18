@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Home page -->
+  <url>
+    <loc>https://ask-ai-pied.vercel.app/</loc>
+    <lastmod>2026-01-18</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Courses -->
+  <url>
+    <loc>https://ask-ai-pied.vercel.app/#courses</loc>
+    <lastmod>2026-01-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- ASKAI Android App -->
+  <url>
+    <loc>https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk</loc>
+    <lastmod>2026-01-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- SMYTHE University iPortal -->
+  <url>
+    <loc>https://icampus.smythe.telligentgh.com/</loc>
+    <lastmod>2026-01-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+</urlset>
