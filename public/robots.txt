@@ -1,5 +1,6 @@
 User-agent: *
+Disallow: /api/
+Disallow: /external-links.xml
 Allow: /
 
-# Sitemap locations
 Sitemap: https://ask-ai-pied.vercel.app/sitemap.xml
