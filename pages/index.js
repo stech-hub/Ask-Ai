@@ -1,3 +1,4 @@
+// SAME IMPORTS
 import { useState, useRef, useEffect } from "react";
 import Head from "next/head";
 
@@ -14,38 +15,29 @@ export default function Home() {
   const [openCourses, setOpenCourses] = useState(false);
   const [openYear, setOpenYear] = useState(null);
   const [openOpportunities, setOpenOpportunities] = useState(false);
+  const [openWork, setOpenWork] = useState(false);
+  const [openLiberia, setOpenLiberia] = useState(false);
 
   const courses = {
-    "Freshman 1": [
-      "Computer Basics",
-      "Digital Literacy",
-      "Intro to Programming (Python)",
-    ],
-    "Freshman 2": ["Web Development (HTML, CSS, JS)", "Discrete Math"],
-    Sophomore: ["Data Structures", "Algorithms", "Databases"],
-    Junior: ["Operating Systems", "Software Engineering", "Computer Networks"],
-    Senior: ["AI & Machine Learning", "Cybersecurity", "Final Year Projects"],
+    "Freshman 1": ["Computer Basics", "Digital Literacy", "Intro to Programming"],
+    "Freshman 2": ["Web Development", "Discrete Math"],
+    Sophomore: ["Data Structures", "Algorithms"],
+    Junior: ["Operating Systems", "Software Engineering"],
+    Senior: ["AI & Machine Learning", "Cybersecurity"],
   };
 
   const sendMessage = async (msg) => {
     if (!msg?.trim()) return;
-
     const newMessages = [...messages, { type: "user", text: msg }];
     setMessages(newMessages);
 
-    const lowerMsg = msg.toLowerCase();
-
-    if (
-      lowerMsg.includes("who created you") ||
-      lowerMsg.includes("creator") ||
-      lowerMsg.includes("owner")
-    ) {
+    if (msg.toLowerCase().includes("creator")) {
       setMessages([
         ...newMessages,
         {
           type: "ai",
           text: `
-Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷<br/><br/>
+Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷<br/>
 💬 <a href="https://wa.me/231777789356" target="_blank">WhatsApp</a><br/>
 📘 <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank">Facebook</a>
           `,
@@ -61,11 +53,10 @@ Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷<br/><br/>
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: msg }),
       });
-
       const data = await res.json();
       setMessages([...newMessages, { type: "ai", text: data.message }]);
     } catch {
-      setMessages([...newMessages, { type: "ai", text: "❌ AI error." }]);
+      setMessages([...newMessages, { type: "ai", text: "❌ Error." }]);
     }
   };
 
@@ -81,107 +72,72 @@ Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷<br/><br/>
   return (
     <>
       <Head>
-        <title>ASKAI – AI Learning Assistant</title>
-        <meta name="robots" content="index, follow" />
-        <meta
-          name="google-site-verification"
-          content="Xph8kvaL-aAkTHe30pd74SqDHgdUFGDx7p3TLie_LTI"
-        />
+        <title>ASKAI – AI Assistant</title>
       </Head>
 
       <div className="app">
-        {/* HEADER */}
         <div className="header">
           <h1>ASKAI</h1>
           <div className="menu-btn" onClick={toggleMenu}>☰</div>
         </div>
 
-        {/* MAIN MENU */}
         <div className="menu" id="menu">
           <a href="#">🏠 Home</a>
 
-          <a href="https://full-task-ai.vercel.app/" target="_blank">
-            🤖 AI Tools
+          {/* WORK & MONEY */}
+          <a onClick={() => setOpenWork(!openWork)}>
+            💼 Work & Money {openWork ? "▲" : "▼"}
           </a>
-
-          <a
-            href="https://github.com/stech-hub/bionurseapk-website/releases/download/v1/myapp.apk"
-            target="_blank"
-          >
-            📱 Download Android App
-          </a>
-
-          <a
-            href="https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk"
-            target="_blank"
-          >
-            📱 Download ASKAI App
-          </a>
-
-          <a href="https://icampus.smythe.telligentgh.com/" target="_blank">
-            🏫 SMYTHE University iPortal
-          </a>
+          {openWork && (
+            <div style={{ paddingLeft: 15 }}>
+              <a href="https://www.upwork.com" target="_blank">Freelancing (Upwork)</a>
+              <a href="https://www.fiverr.com" target="_blank">Fiverr</a>
+              <a href="https://remoteok.com" target="_blank">Remote Jobs</a>
+              <a href="https://jumia.com" target="_blank">Affiliate Marketing</a>
+            </div>
+          )}
 
           {/* OPPORTUNITIES */}
-          <a
-            href="#!"
-            onClick={() => setOpenOpportunities(!openOpportunities)}
-            style={{ fontWeight: "700" }}
-          >
-            🌍 Opportunities {openOpportunities ? "▲" : "▼"}
+          <a onClick={() => setOpenOpportunities(!openOpportunities)}>
+            🎓 Education & Travel {openOpportunities ? "▲" : "▼"}
           </a>
-
           {openOpportunities && (
-            <div style={{ paddingLeft: "15px" }}>
-              <a
-                href="https://jumia.com"
-                target="_blank"
-              >
-                💰 Affiliate Program (Jumia)
+            <div style={{ paddingLeft: 15 }}>
+              <a href="https://opportunitiesforafricans.com" target="_blank">
+                Scholarships Abroad
               </a>
-
-              <a
-                href="https://opportunitiesforafricans.com"
-                target="_blank"
-              >
-                🎓 Free Scholarships & Travel Abroad
+              <a href="https://www.coursera.org" target="_blank">
+                Free Certificates
               </a>
-
-              <a
-                href="https://www.orange.com/en/countries/liberia"
-                target="_blank"
-              >
-                📡 Orange Liberia Official
+              <a href="https://www.youthop.com" target="_blank">
+                Global Youth Programs
               </a>
+            </div>
+          )}
 
-              <a
-                href="https://www.coursera.org"
-                target="_blank"
-              >
-                📚 Free Online Courses
+          {/* LIBERIA */}
+          <a onClick={() => setOpenLiberia(!openLiberia)}>
+            🇱🇷 Liberia Resources {openLiberia ? "▲" : "▼"}
+          </a>
+          {openLiberia && (
+            <div style={{ paddingLeft: 15 }}>
+              <a href="https://www.orange.com/en/countries/liberia" target="_blank">
+                Orange Liberia
               </a>
-
-              <a
-                href="https://www.youthop.com"
-                target="_blank"
-              >
-                ✈️ Youth Global Opportunities
+              <a href="https://mtn.com" target="_blank">MTN Africa</a>
+              <a href="https://www.emansion.gov.lr/" target="_blank">
+                Government of Liberia
               </a>
             </div>
           )}
 
           {/* COURSES */}
-          <a
-            href="#!"
-            onClick={() => setOpenCourses(!openCourses)}
-            style={{ fontWeight: "700" }}
-          >
+          <a onClick={() => setOpenCourses(!openCourses)}>
             🎓 Free CS Courses {openCourses ? "▲" : "▼"}
           </a>
-
           {openCourses &&
             Object.keys(courses).map((year) => (
-              <div key={year} style={{ paddingLeft: "15px" }}>
+              <div key={year} style={{ paddingLeft: 15 }}>
                 <a onClick={() => setOpenYear(openYear === year ? null : year)}>
                   {year}
                 </a>
@@ -189,7 +145,7 @@ Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷<br/><br/>
                   courses[year].map((course) => (
                     <a
                       key={course}
-                      style={{ paddingLeft: "20px" }}
+                      style={{ paddingLeft: 20 }}
                       onClick={() =>
                         sendMessage(`Explain ${course} in simple terms`)
                       }
@@ -200,26 +156,24 @@ Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷<br/><br/>
               </div>
             ))}
 
-          {/* CONTACT */}
+          <a href="https://github.com" target="_blank">💻 GitHub</a>
           <a href="https://wa.me/231777789356" target="_blank">
-            💬 Contact / Hire Me
+            💬 Contact / Hire Developer
           </a>
         </div>
 
-        {/* CHAT */}
         <div className="chat" ref={chatRef}>
-          {messages.map((msg, i) => (
-            <div key={i} className={`msg ${msg.type}`}>
-              {msg.isHTML ? (
-                <div dangerouslySetInnerHTML={{ __html: msg.text }} />
+          {messages.map((m, i) => (
+            <div key={i} className={`msg ${m.type}`}>
+              {m.isHTML ? (
+                <div dangerouslySetInnerHTML={{ __html: m.text }} />
               ) : (
-                msg.text.split("\n").map((l, x) => <div key={x}>{l}</div>)
+                m.text
               )}
             </div>
           ))}
         </div>
 
-        {/* INPUT */}
         <div className="input">
           <textarea
             placeholder="Ask me anything..."
@@ -238,9 +192,8 @@ Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷<br/><br/>
           </button>
         </div>
 
-        {/* FOOTER */}
         <div className="footer">
-          Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷
+          Created by <strong>Akin S. Sokpah</strong> 🇱🇷
         </div>
       </div>
     </>
