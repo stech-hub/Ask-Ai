@@ -14,6 +14,8 @@ export default function Home() {
   const [openCourses, setOpenCourses] = useState(false);
   const [openYear, setOpenYear] = useState(null);
 
+  const [openUniversities, setOpenUniversities] = useState(false);
+
   const courses = {
     "Freshman 1": [
       "Computer Basics",
@@ -26,6 +28,23 @@ export default function Home() {
     Senior: ["AI & Machine Learning", "Cybersecurity", "Final Year Projects"],
   };
 
+  const universitiesLiberia = [
+    { name: "University of Liberia - UL", url: "https://www.ul.edu.lr" },
+    { name: "William V.S. Tubman University", url: "https://wvsu.edu.lr" },
+    { name: "Nimba University", url: "https://nimbauniversity.edu.lr" },
+    { name: "Margibi University", url: "https://margibiuniversity.edu.lr" },
+    { name: "Cuttington University", url: "https://www.cuttington.edu.lr" },
+    { name: "African Methodist Episcopal University", url: "https://www.ameu.edu.lr" },
+    { name: "United Methodist University", url: "https://umu.edu.lr" },
+    { name: "Stella Maris Polytechnic University", url: "https://smpu.edu.lr" },
+    { name: "Adventist University of West Africa", url: "https://www.auwa.edu.lr" },
+    { name: "Starz University", url: "https://www.starzuniversity.edu.lr" },
+    { name: "Smythe University College", url: "https://icampus.smythe.telligentgh.com/" },
+    { name: "African Methodist Episcopal Zion University", url: "https://amezion.edu.lr" },
+    { name: "African Bible College University", url: "https://abcuniversity.org" },
+    { name: "Liberia International Christian College", url: "https://licc.edu.lr" },
+  ];
+
   const sendMessage = async (msg) => {
     if (!msg?.trim()) return;
     const newMessages = [...messages, { type: "user", text: msg }];
@@ -33,7 +52,6 @@ export default function Home() {
 
     const lowerMsg = msg.toLowerCase();
 
-    // Custom creator response with buttons
     if (
       lowerMsg.includes("who created you") ||
       lowerMsg.includes("who made you") ||
@@ -56,7 +74,6 @@ export default function Home() {
       return;
     }
 
-    // Default AI API
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -82,28 +99,26 @@ export default function Home() {
   return (
     <>
       <Head>
-        {/* Google verification */}
         <meta
           name="google-site-verification"
           content="Xph8kvaL-aAkTHe30pd74SqDHgdUFGDx7p3TLie_LTI"
         />
-
-        {/* SEO */}
-        <title>ASKAI – AI Assistant, Learning Platform, Coding Help in Liberia</title>
+        <title>ASKAI – AI Assistant & Learning Platform in Liberia</title>
         <meta
           name="description"
           content="ASKAI is your free AI learning assistant. Chat with AI for coding help, access CS courses, find scholarships, jobs, and download the ASKAI app in Liberia and worldwide."
         />
-        <meta name="keywords" content="ASKAI AI assistant, ASKAI learning platform, ASKAI coding help, ASKAI Liberia, ASKAI CS courses, free AI learning assistant for students, ask AI for coding help online, Liberia online scholarships and jobs, download ASKAI app Liberia, AI assistant for learning and productivity, AskAI, Ask AI" />
-        
-        {/* Open Graph for social sharing */}
+        <meta
+          name="keywords"
+          content="ASKAI AI assistant, ASKAI learning platform, ASKAI coding help, ASKAI Liberia, ASKAI CS courses, free AI learning assistant for students, ask AI for coding help online, Liberia online scholarships and jobs, download ASKAI app Liberia, AI assistant for learning and productivity, AskAI, Ask AI"
+        />
+
         <meta property="og:title" content="ASKAI – AI Assistant & Learning Platform" />
         <meta property="og:description" content="Free AI assistant for coding, computer science courses, scholarships, jobs, and more for Liberia and globally." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://ask-ai-pied.vercel.app/" />
         <meta property="og:image" content="https://ask-ai-pied.vercel.app/logo.png" />
 
-        {/* Structured data for app */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -123,87 +138,45 @@ export default function Home() {
       </Head>
 
       <div className="app">
-        {/* Header */}
         <div className="header">
           <h1>ASKAI</h1>
           <div className="menu-btn" onClick={toggleMenu}>☰</div>
         </div>
 
-        {/* Menu */}
         <div className="menu" id="menu">
           <a href="#">🏠 Home</a>
           <a href="https://full-task-ai.vercel.app/" target="_blank">🤖 AI Tools</a>
 
           {/* Apps */}
-          <a
-            href="https://github.com/stech-hub/bionurseapk-website/releases/download/v1/myapp.apk"
-            target="_blank"
-          >
-            📱 Download Android App
-          </a>
-          <a
-            href="https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk"
-            target="_blank"
-            download
-          >
-            📱 Download ASKAI App
-          </a>
+          <a href="https://github.com/stech-hub/bionurseapk-website/releases/download/v1/myapp.apk" target="_blank">📱 Download Android App</a>
+          <a href="https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk" target="_blank" download>📱 Download ASKAI App</a>
 
           {/* University Portals */}
-          <a href="https://icampus.smythe.telligentgh.com/" target="_blank">
-            🏫 SMYTHE UNIVERSITY COLLEGE IPORTAL
-          </a>
+          <a href="#!" onClick={() => setOpenUniversities(!openUniversities)}>🎓 University Portals (Liberia) {openUniversities ? "▲" : "▼"}</a>
+          {openUniversities &&
+            universitiesLiberia.map((uni) => (
+              <a key={uni.name} href={uni.url} target="_blank" style={{ paddingLeft: "15px", display: "block" }}>
+                {uni.name}
+              </a>
+            ))}
 
           {/* Contact & Hire */}
           <div style={{ paddingTop: "10px", borderTop: "1px solid #eee" }}>
-            <a
-              href="https://wa.me/231777789356"
-              target="_blank"
-              style={{ color: "white", background: "#25D366", padding: "8px 14px", borderRadius: "6px", display: "inline-block", marginBottom: "6px", textDecoration: "none" }}
-            >
-              💬 Contact Me on WhatsApp
-            </a>
+            <a href="https://wa.me/231777789356" target="_blank" style={{ color: "white", background: "#25D366", padding: "8px 14px", borderRadius: "6px", display: "inline-block", marginBottom: "6px", textDecoration: "none" }}>💬 Contact Me on WhatsApp</a>
             <br />
-            <a
-              href="https://www.facebook.com/profile.php?id=61583456361691"
-              target="_blank"
-              style={{ color: "white", background: "#1877F2", padding: "8px 14px", borderRadius: "6px", display: "inline-block", textDecoration: "none" }}
-            >
-              📘 Follow Me on Facebook / Hire Me
-            </a>
+            <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank" style={{ color: "white", background: "#1877F2", padding: "8px 14px", borderRadius: "6px", display: "inline-block", textDecoration: "none" }}>📘 Follow Me on Facebook / Hire Me</a>
           </div>
 
-          {/* Courses */}
+          {/* Free CS Courses */}
           <div>
-            <a
-              href="#!"
-              onClick={() => setOpenCourses(!openCourses)}
-              style={{ fontWeight: "700", display: "block", marginTop: "10px" }}
-            >
-              🎓 Free CS Courses {openCourses ? "▲" : "▼"}
-            </a>
-
+            <a href="#!" onClick={() => setOpenCourses(!openCourses)} style={{ fontWeight: "700", display: "block", marginTop: "10px" }}>🎓 Free CS Courses {openCourses ? "▲" : "▼"}</a>
             {openCourses &&
               Object.keys(courses).map((year) => (
                 <div key={year} style={{ paddingLeft: "15px" }}>
-                  <a
-                    href="#!"
-                    onClick={() => setOpenYear(openYear === year ? null : year)}
-                    style={{ fontWeight: "500" }}
-                  >
-                    {year} {openYear === year ? "▲" : "▼"}
-                  </a>
-
+                  <a href="#!" onClick={() => setOpenYear(openYear === year ? null : year)} style={{ fontWeight: "500" }}>{year} {openYear === year ? "▲" : "▼"}</a>
                   {openYear === year &&
                     courses[year].map((course) => (
-                      <a
-                        href="#!"
-                        key={course}
-                        style={{ paddingLeft: "20px", fontSize: "0.9rem" }}
-                        onClick={() => sendMessage(`Explain ${course} in simple terms.`)}
-                      >
-                        {course}
-                      </a>
+                      <a href="#!" key={course} style={{ paddingLeft: "20px", fontSize: "0.9rem" }} onClick={() => sendMessage(`Explain ${course} in simple terms.`)}>{course}</a>
                     ))}
                 </div>
               ))}
@@ -218,36 +191,19 @@ export default function Home() {
         <div className="chat" ref={chatRef}>
           {messages.map((msg, idx) => (
             <div key={idx} className={`msg ${msg.type}`}>
-              {msg.isHTML ? (
-                <div dangerouslySetInnerHTML={{ __html: msg.text }} />
-              ) : (
-                msg.text.split("\n").map((line, i) => <div key={i}>{line}</div>)
-              )}
+              {msg.isHTML ? <div dangerouslySetInnerHTML={{ __html: msg.text }} /> : msg.text.split("\n").map((line, i) => <div key={i}>{line}</div>)}
             </div>
           ))}
         </div>
 
         {/* Input */}
         <div className="input">
-          <textarea
-            placeholder="Ask me anything..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) =>
-              e.key === "Enter" &&
-              !e.shiftKey &&
-              (e.preventDefault(), sendMessage(input), setInput(""))
-            }
-          />
+          <textarea placeholder="Ask me anything..." value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), sendMessage(input), setInput(""))} />
           <button onClick={() => { sendMessage(input); setInput(""); }}>Send</button>
         </div>
 
-        {/* Footer */}
         <div className="footer">
-          Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷 |{" "}
-          <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank">
-            Facebook
-          </a>
+          Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷 | <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank">Facebook</a>
         </div>
       </div>
     </>
