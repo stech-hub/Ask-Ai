@@ -13,13 +13,19 @@ export default function Home() {
 
   // Main menu links
   const menuLinks = [
+    // Internal pages
     { name: "Home", url: "/" },
-    { name: "AI Tools", url: "https://full-task-ai.vercel.app/", target: "_blank" },
+    { name: "About", url: "/about" },
+    { name: "Courses", url: "/courses" },
+    { name: "Contact", url: "/contact" },
+
+    // External resources
     { name: "Download ASKAI App", url: "https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk", target: "_blank" },
     { name: "Download Other App", url: "https://github.com/stech-hub/bionurseapk-website/releases/download/v1/myapp.apk", target: "_blank" },
+    { name: "AI Tools", url: "https://full-task-ai.vercel.app/", target: "_blank" },
     { name: "SMYTHE University iPortal", url: "https://icampus.smythe.telligentgh.com/", target: "_blank" },
 
-    // Affiliate programs
+    // Affiliate Programs
     { name: "Jumia", url: "https://jumia.com", target: "_blank" },
     { name: "Expertnaire", url: "https://expertnaire.com", target: "_blank" },
     { name: "Amazon", url: "https://amazon.com", target: "_blank" },
@@ -33,24 +39,25 @@ export default function Home() {
     { name: "DAAD", url: "https://www.daad.de/", target: "_blank" },
     { name: "Study Abroad", url: "https://www.studyabroad.com/", target: "_blank" },
 
-    // Jobs
+    // Jobs & Freelancing
     { name: "Job Liberia", url: "https://www.jobliberia.com/", target: "_blank" },
     { name: "My Jobs", url: "https://www.myjobs.com.lr/", target: "_blank" },
     { name: "Upwork", url: "https://www.upwork.com/", target: "_blank" },
     { name: "Fiverr", url: "https://www.fiverr.com/", target: "_blank" },
 
-    // Telecom
+    // Telecom & Services
     { name: "Orange Liberia", url: "https://www.orange.com/lr/", target: "_blank" },
     { name: "Lonestar Cell", url: "https://www.lonestarcell.com/", target: "_blank" },
     { name: "Africell", url: "https://www.africell.com.lr/", target: "_blank" },
 
-    // News
+    // News & Media
     { name: "FrontPage Africa", url: "https://frontpageafricaonline.com/", target: "_blank" },
     { name: "The New Dawn", url: "https://thenewdawnliberia.com/", target: "_blank" },
     { name: "BBC News", url: "https://www.bbc.com/news", target: "_blank" },
     { name: "CNN", url: "https://www.cnn.com/", target: "_blank" },
   ];
 
+  // Send message function
   const sendMessage = async (msg) => {
     if (!msg?.trim()) return;
 
