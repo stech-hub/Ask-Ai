@@ -13,6 +13,7 @@ export default function Home() {
 
   const [openCourses, setOpenCourses] = useState(false);
   const [openYear, setOpenYear] = useState(null);
+  const [openOpportunities, setOpenOpportunities] = useState(false);
 
   const courses = {
     "Freshman 1": [
@@ -34,43 +35,26 @@ export default function Home() {
 
     const lowerMsg = msg.toLowerCase();
 
-    // ✅ FIXED creator response (NO MORE CONTRADICTION)
     if (
       lowerMsg.includes("who created you") ||
-      lowerMsg.includes("who made you") ||
-      lowerMsg.includes("who is your creator") ||
-      lowerMsg.includes("who is your owner")
+      lowerMsg.includes("creator") ||
+      lowerMsg.includes("owner")
     ) {
-      const response = `
-<div>
-  <p>
-    I am <strong>ASKAI</strong>, an AI-powered application built and deployed by 
-    <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷.
-  </p>
-  <p>
-    My AI capabilities are powered by <strong>OpenAI technology</strong>.
-  </p>
-
-  <p>
-    💬 <a href="https://wa.me/231777789356" target="_blank"
-    style="color:white;background:#25D366;padding:6px 12px;border-radius:6px;text-decoration:none;">
-    Message Akin on WhatsApp
-    </a>
-  </p>
-
-  <p>
-    📘 <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank"
-    style="color:white;background:#1877F2;padding:6px 12px;border-radius:6px;text-decoration:none;">
-    Follow on Facebook / Hire for websites
-    </a>
-  </p>
-</div>
-      `;
-      setMessages([...newMessages, { type: "ai", text: response, isHTML: true }]);
+      setMessages([
+        ...newMessages,
+        {
+          type: "ai",
+          text: `
+Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷<br/><br/>
+💬 <a href="https://wa.me/231777789356" target="_blank">WhatsApp</a><br/>
+📘 <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank">Facebook</a>
+          `,
+          isHTML: true,
+        },
+      ]);
       return;
     }
 
-    // Default AI API
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -80,8 +64,8 @@ export default function Home() {
 
       const data = await res.json();
       setMessages([...newMessages, { type: "ai", text: data.message }]);
-    } catch (err) {
-      setMessages([...newMessages, { type: "ai", text: "❌ Error contacting AI." }]);
+    } catch {
+      setMessages([...newMessages, { type: "ai", text: "❌ AI error." }]);
     }
   };
 
@@ -97,60 +81,166 @@ export default function Home() {
   return (
     <>
       <Head>
+        <title>ASKAI – AI Learning Assistant</title>
+        <meta name="robots" content="index, follow" />
         <meta
           name="google-site-verification"
           content="Xph8kvaL-aAkTHe30pd74SqDHgdUFGDx7p3TLie_LTI"
         />
-
-        <title>ASKAI – AI Chat & Learning Assistant</title>
-        <meta
-          name="description"
-          content="ASKAI lets you chat with AI, learn computer science courses, download Android apps, and access SMYTHE University iPortal."
-        />
-        <meta name="robots" content="index, follow" />
       </Head>
 
       <div className="app">
+        {/* HEADER */}
         <div className="header">
           <h1>ASKAI</h1>
           <div className="menu-btn" onClick={toggleMenu}>☰</div>
         </div>
 
+        {/* MAIN MENU */}
+        <div className="menu" id="menu">
+          <a href="#">🏠 Home</a>
+
+          <a href="https://full-task-ai.vercel.app/" target="_blank">
+            🤖 AI Tools
+          </a>
+
+          <a
+            href="https://github.com/stech-hub/bionurseapk-website/releases/download/v1/myapp.apk"
+            target="_blank"
+          >
+            📱 Download Android App
+          </a>
+
+          <a
+            href="https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk"
+            target="_blank"
+          >
+            📱 Download ASKAI App
+          </a>
+
+          <a href="https://icampus.smythe.telligentgh.com/" target="_blank">
+            🏫 SMYTHE University iPortal
+          </a>
+
+          {/* OPPORTUNITIES */}
+          <a
+            href="#!"
+            onClick={() => setOpenOpportunities(!openOpportunities)}
+            style={{ fontWeight: "700" }}
+          >
+            🌍 Opportunities {openOpportunities ? "▲" : "▼"}
+          </a>
+
+          {openOpportunities && (
+            <div style={{ paddingLeft: "15px" }}>
+              <a
+                href="https://jumia.com"
+                target="_blank"
+              >
+                💰 Affiliate Program (Jumia)
+              </a>
+
+              <a
+                href="https://opportunitiesforafricans.com"
+                target="_blank"
+              >
+                🎓 Free Scholarships & Travel Abroad
+              </a>
+
+              <a
+                href="https://www.orange.com/en/countries/liberia"
+                target="_blank"
+              >
+                📡 Orange Liberia Official
+              </a>
+
+              <a
+                href="https://www.coursera.org"
+                target="_blank"
+              >
+                📚 Free Online Courses
+              </a>
+
+              <a
+                href="https://www.youthop.com"
+                target="_blank"
+              >
+                ✈️ Youth Global Opportunities
+              </a>
+            </div>
+          )}
+
+          {/* COURSES */}
+          <a
+            href="#!"
+            onClick={() => setOpenCourses(!openCourses)}
+            style={{ fontWeight: "700" }}
+          >
+            🎓 Free CS Courses {openCourses ? "▲" : "▼"}
+          </a>
+
+          {openCourses &&
+            Object.keys(courses).map((year) => (
+              <div key={year} style={{ paddingLeft: "15px" }}>
+                <a onClick={() => setOpenYear(openYear === year ? null : year)}>
+                  {year}
+                </a>
+                {openYear === year &&
+                  courses[year].map((course) => (
+                    <a
+                      key={course}
+                      style={{ paddingLeft: "20px" }}
+                      onClick={() =>
+                        sendMessage(`Explain ${course} in simple terms`)
+                      }
+                    >
+                      {course}
+                    </a>
+                  ))}
+              </div>
+            ))}
+
+          {/* CONTACT */}
+          <a href="https://wa.me/231777789356" target="_blank">
+            💬 Contact / Hire Me
+          </a>
+        </div>
+
+        {/* CHAT */}
         <div className="chat" ref={chatRef}>
-          {messages.map((msg, idx) => (
-            <div key={idx} className={`msg ${msg.type}`}>
+          {messages.map((msg, i) => (
+            <div key={i} className={`msg ${msg.type}`}>
               {msg.isHTML ? (
                 <div dangerouslySetInnerHTML={{ __html: msg.text }} />
               ) : (
-                msg.text.split("\n").map((line, i) => <div key={i}>{line}</div>)
+                msg.text.split("\n").map((l, x) => <div key={x}>{l}</div>)
               )}
             </div>
           ))}
         </div>
 
+        {/* INPUT */}
         <div className="input">
           <textarea
             placeholder="Ask me anything..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) =>
-              e.key === "Enter" &&
-              !e.shiftKey &&
-              (e.preventDefault(), sendMessage(input), setInput(""))
-            }
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage(input);
+                setInput("");
+              }
+            }}
           />
-          <button onClick={() => { sendMessage(input); setInput(""); }}>Send</button>
+          <button onClick={() => { sendMessage(input); setInput(""); }}>
+            Send
+          </button>
         </div>
 
-        {/* ✅ FIXED FOOTER */}
+        {/* FOOTER */}
         <div className="footer">
-          ASKAI built by <strong>Akin S. Sokpah</strong> 🇱🇷 | Powered by OpenAI |{" "}
-          <a
-            href="https://www.facebook.com/profile.php?id=61583456361691"
-            target="_blank"
-          >
-            Facebook
-          </a>
+          Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷
         </div>
       </div>
     </>
