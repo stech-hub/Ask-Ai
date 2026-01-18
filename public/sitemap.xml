@@ -1,101 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
-  <!-- Home page -->
+  <!-- Home -->
   <url>
     <loc>https://ask-ai-pied.vercel.app/</loc>
-    <lastmod>2026-01-18</lastmod>
-    <changefreq>daily</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
-  <!-- Courses -->
+  <!-- Apps -->
   <url>
-    <loc>https://ask-ai-pied.vercel.app/#courses</loc>
-    <lastmod>2026-01-18</lastmod>
+    <loc>https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://github.com/stech-hub/bionurseapk-website/releases/download/v1/myapp.apk</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://full-task-ai.vercel.app/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- University Portals -->
+  <url>
+    <loc>https://icampus.smythe.telligentgh.com/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
-  <!-- ASKAI Android App -->
-  <url>
-    <loc>https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk</loc>
-    <lastmod>2026-01-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
+  <!-- Affiliate Programs -->
+  <url><loc>https://jumia.com</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://expertnaire.com</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://amazon.com</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://ebay.com</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://aliexpress.com</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
 
-  <!-- Existing Android App -->
-  <url>
-    <loc>https://github.com/stech-hub/bionurseapk-website/releases/download/v1/myapp.apk</loc>
-    <lastmod>2026-01-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
+  <!-- Scholarships -->
+  <url><loc>https://www.opportunitiesforafricans.com/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.chevening.org/</loc><changefreq>yearly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.fulbrightprogram.org/</loc><changefreq>yearly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.daad.de/</loc><changefreq>yearly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.studyabroad.com/</loc><changefreq>yearly</changefreq><priority>0.7</priority></url>
 
-  <!-- SMYTHE University iPortal -->
-  <url>
-    <loc>https://icampus.smythe.telligentgh.com/</loc>
-    <lastmod>2026-01-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
+  <!-- Jobs & Freelancing -->
+  <url><loc>https://www.jobliberia.com/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.myjobs.com.lr/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.upwork.com/</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.fiverr.com/</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
 
-  <!-- Affiliate / Scholarships / Jobs / Liberia services -->
-  <url>
-    <loc>https://jumia.com</loc>
-    <lastmod>2026-01-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
+  <!-- Telecom & Services -->
+  <url><loc>https://www.orange.com/lr/</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.lonestarcell.com/</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.africell.com.lr/</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
 
-  <url>
-    <loc>https://expertnaire.com</loc>
-    <lastmod>2026-01-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
+  <!-- News & Media -->
+  <url><loc>https://frontpageafricaonline.com/</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://thenewdawnliberia.com/</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bbc.com/news</loc><changefreq>daily</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.cnn.com/</loc><changefreq>daily</changefreq><priority>0.6</priority></url>
 
-  <url>
-    <loc>https://www.opportunitiesforafricans.com/</loc>
-    <lastmod>2026-01-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-
-  <url>
-    <loc>https://www.studyabroad.com/</loc>
-    <lastmod>2026-01-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-
-  <url>
-    <loc>https://www.orange.com/lr/</loc>
-    <lastmod>2026-01-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
-
-  <url>
-    <loc>https://www.lonestarcell.com/</loc>
-    <lastmod>2026-01-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
-
-  <url>
-    <loc>https://www.upwork.com/</loc>
-    <lastmod>2026-01-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-
-  <url>
-    <loc>https://www.fiverr.com/</loc>
-    <lastmod>2026-01-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
+  <!-- Social / Contact -->
+  <url><loc>https://wa.me/231777789356</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://www.facebook.com/profile.php?id=61583456361691</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
 
 </urlset>
