@@ -3,19 +3,33 @@ import { useState, useRef, useEffect } from "react";
 import Head from "next/head";
 
 export default function Home() {
-  const [messages, setMessages] = useState([
-    {
-      type: "ai",
-      text: "👋 Welcome to ASKAI!\nYour intelligent assistant for learning, productivity, and coding.",
-    },
-  ]);
+  // Load messages from localStorage if available, else default AI greeting
+  const [messages, setMessages] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("askai_messages");
+      return saved
+        ? JSON.parse(saved)
+        : [
+            {
+              type: "ai",
+              text: "👋 Welcome to ASKAI!\nYour intelligent assistant for learning, productivity, and coding.",
+            },
+          ];
+    }
+    return [
+      {
+        type: "ai",
+        text: "👋 Welcome to ASKAI!\nYour intelligent assistant for learning, productivity, and coding.",
+      },
+    ];
+  });
+
   const [input, setInput] = useState("");
   const chatRef = useRef();
 
   const [openCourses, setOpenCourses] = useState(false);
   const [openYear, setOpenYear] = useState(null);
   const [openUniversities, setOpenUniversities] = useState(false);
-  const [openFeatures, setOpenFeatures] = useState(false);
 
   const courses = {
     "Freshman 1": ["Computer Basics", "Digital Literacy", "Intro to Programming (Python)"],
@@ -42,53 +56,10 @@ export default function Home() {
     { name: "Liberia International Christian College", url: "https://licc.edu.lr" },
   ];
 
-  const otherFeatures = [
-    { name: "Jobs & Careers", links: [
-      { name: "LinkedIn Jobs", url: "https://www.linkedin.com/jobs/" },
-      { name: "Indeed", url: "https://www.indeed.com/" },
-      { name: "Glassdoor", url: "https://www.glassdoor.com/index.htm" },
-      { name: "Monster", url: "https://www.monster.com/" },
-    ]},
-    { name: "Scholarships (Free Programs)", links: [
-      { name: "ScholarshipPortal", url: "https://www.scholarshipportal.com/" },
-      { name: "DAAD (Germany)", url: "https://www.daad.de/en/" },
-      { name: "Chevening (UK)", url: "https://www.chevening.org/" },
-      { name: "Fulbright Program (USA)", url: "https://foreign.fulbrightonline.org/" },
-    ]},
-    { name: "Travel & Visa Info", links: [
-      { name: "Travelbriefing", url: "https://travelbriefing.org/" },
-      { name: "US Travel Visa Info", url: "https://travel.state.gov/" },
-      { name: "Schengen Visa Info", url: "https://www.schengenvisainfo.com/" },
-    ]},
-    { name: "News", links: [
-      { name: "BBC News", url: "https://www.bbc.com/news" },
-      { name: "CNN", url: "https://edition.cnn.com/" },
-      { name: "Al Jazeera", url: "https://www.aljazeera.com/" },
-    ]},
-    { name: "Telecommunications", links: [
-      { name: "MTN Africa", url: "https://www.mtn.com/" },
-      { name: "Vodafone", url: "https://www.vodafone.com/" },
-      { name: "Airtel", url: "https://www.airtel.in/" },
-      { name: "Orange", url: "https://www.orange.com/en" },
-    ]},
-    { name: "Other Useful Features", links: [
-      { name: "FreeCodeCamp", url: "https://www.freecodecamp.org/" },
-      { name: "OpenAI Tools", url: "https://openai.com/" },
-      { name: "CoinMarketCap", url: "https://coinmarketcap.com/" },
-      { name: "Weather Updates", url: "https://weather.com/" },
-      { name: "XE Currency Converter", url: "https://www.xe.com/" },
-      { name: "Flight Booking (Skyscanner)", url: "https://www.skyscanner.net/" },
-      { name: "Hotels Booking (Booking.com)", url: "https://www.booking.com/" },
-      { name: "Public APIs (RapidAPI)", url: "https://rapidapi.com/" },
-      { name: "COVID-19 Info (WHO)", url: "https://www.who.int/" },
-      { name: "Eventbrite (Events)", url: "https://www.eventbrite.com/" },
-      { name: "University Admissions (TopUniversities)", url: "https://www.topuniversities.com/" },
-      { name: "Startup Funding (Crunchbase)", url: "https://www.crunchbase.com/" },
-    ]},
-  ];
-
+  // Send message to OpenAI API
   const sendMessage = async (msg) => {
     if (!msg?.trim()) return;
+
     const newMessages = [...messages, { type: "user", text: msg }];
     setMessages(newMessages);
 
@@ -96,17 +67,32 @@ export default function Home() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: msg }),
+        body: JSON.stringify({
+          // Send last 10 messages as context
+          messages: newMessages.slice(-10).map((m) => ({
+            role: m.type === "ai" ? "assistant" : "user",
+            content: m.text,
+          })),
+        }),
       });
+
       const data = await res.json();
       if (!data.message) throw new Error("API returned empty message");
-      setMessages([...newMessages, { type: "ai", text: data.message }]);
+
+      const updatedMessages = [...newMessages, { type: "ai", text: data.message }];
+      setMessages(updatedMessages);
+
+      // Save to localStorage for memory
+      localStorage.setItem("askai_messages", JSON.stringify(updatedMessages));
     } catch (err) {
       console.error("Chat error:", err);
-      setMessages([...newMessages, { type: "ai", text: "⚠️ AI is temporarily unavailable. Please try again in a moment." }]);
+      const fallback = [...newMessages, { type: "ai", text: "⚠️ AI is temporarily unavailable. Please try again in a moment." }];
+      setMessages(fallback);
+      localStorage.setItem("askai_messages", JSON.stringify(fallback));
     }
   };
 
+  // Auto-scroll chat
   useEffect(() => {
     chatRef.current.scrollTop = chatRef.current.scrollHeight;
   }, [messages]);
@@ -120,8 +106,10 @@ export default function Home() {
     <>
       <Head>
         <title>ASKAI – AI Assistant & Learning Platform</title>
-        <meta name="description" content="ASKAI is your free AI learning assistant. Chat with AI for coding help, access CS courses, find scholarships, jobs, and download the ASKAI app in Liberia and worldwide." />
-        <meta name="keywords" content="ASKAI AI assistant, ASKAI learning platform, ASKAI coding help, ASKAI Liberia, ASKAI CS courses, free AI learning assistant for students, ask AI for coding help online, Liberia online scholarships and jobs, download ASKAI app Liberia, AI assistant for learning and productivity, AskAI, Ask AI" />
+        <meta
+          name="description"
+          content="ASKAI is your free AI learning assistant. Chat with AI for coding help, access CS courses, find scholarships, jobs, and download the ASKAI app in Liberia and worldwide."
+        />
       </Head>
 
       <div className="app">
@@ -144,7 +132,9 @@ export default function Home() {
           </a>
           {openUniversities &&
             universitiesLiberia.map((uni) => (
-              <a key={uni.name} href={uni.url} target="_blank" style={{ paddingLeft: "15px", display: "block" }}>{uni.name}</a>
+              <a key={uni.name} href={uni.url} target="_blank" style={{ paddingLeft: "15px", display: "block" }}>
+                {uni.name}
+              </a>
             ))}
 
           {/* Free CS Courses */}
@@ -159,26 +149,15 @@ export default function Home() {
                 </a>
                 {openYear === year &&
                   courses[year].map((course) => (
-                    <a key={course} href="#!" style={{ paddingLeft: "20px", fontSize: "0.9rem" }} onClick={() => sendMessage(`Explain ${course} in simple terms.`)}>
+                    <a
+                      key={course}
+                      href="#!"
+                      style={{ paddingLeft: "20px", fontSize: "0.9rem" }}
+                      onClick={() => sendMessage(`Explain ${course} in simple terms.`)}
+                    >
                       {course}
                     </a>
                   ))}
-              </div>
-            ))}
-
-          {/* Other Features */}
-          <a href="#!" onClick={() => setOpenFeatures(!openFeatures)}>
-            🌐 Global Opportunities & More {openFeatures ? "▲" : "▼"}
-          </a>
-          {openFeatures &&
-            otherFeatures.map((cat) => (
-              <div key={cat.name} style={{ paddingLeft: "15px" }}>
-                <a href="#!" style={{ fontWeight: "bold" }}>{cat.name}</a>
-                {cat.links.map((link) => (
-                  <a key={link.name} href={link.url} target="_blank" style={{ paddingLeft: "20px", fontSize: "0.9rem" }}>
-                    {link.name}
-                  </a>
-                ))}
               </div>
             ))}
 
@@ -227,6 +206,7 @@ export default function Home() {
         </div>
       </div>
 
+      {/* CSS */}
       <style jsx>{`
         .app { display: flex; flex-direction: column; height: 100vh; font-family: Arial, sans-serif; }
         .header { background: #0a74da; color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; }
