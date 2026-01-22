@@ -1,16 +1,13 @@
-// /pages/api/chat.js
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
-
+  
   const { messages } = req.body;
 
-  if (!messages || !messages.length) {
+  if (!messages || messages.length === 0) {
     return res.status(400).json({ message: "Message is required" });
   }
 
@@ -24,6 +21,6 @@ export default async function handler(req, res) {
     res.status(200).json({ message: aiMessage });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "AI temporarily unavailable" });
+    res.status(500).json({ message: "⚠️ AI temporarily unavailable" });
   }
 }
