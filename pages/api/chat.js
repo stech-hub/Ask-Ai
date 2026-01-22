@@ -1,62 +1,64 @@
+// pages/api/chat.js
 import OpenAI from "openai";
-
-export const config = {
-  api: {
-    bodyParser: true,
-  },
-};
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-  timeout: 20000, // 20 seconds timeout
 });
+
+// Optional: Gemini fallback key
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || null;
+
+async function fetchFromOpenAI(message) {
+  return await openai.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    messages: [
+      {
+        role: "system",
+        content:
+          "You are ASKAI, an AI assistant for learning, coding, scholarships, jobs, and up-to-date global information."
+      },
+      { role: "user", content: message }
+    ],
+    temperature: 0.6
+  });
+}
+
+// Dummy Gemini fetch example (replace with real API if available)
+async function fetchFromGemini(message) {
+  if (!GEMINI_API_KEY) throw new Error("Gemini API not configured.");
+  // Example structure: simulate similar response
+  return { choices: [{ message: { content: "Gemini fallback response: " + message } }] };
+}
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method not allowed" });
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
-  try {
-    const { message } = req.body;
+  const { message } = req.body;
+  if (!message) return res.status(400).json({ error: "Message is required" });
 
-    if (!message || typeof message !== "string") {
-      return res.status(400).json({ message: "Message is required" });
+  try {
+    // Try OpenAI first
+    const completion = await fetchFromOpenAI(message);
+    return res.status(200).json({ message: completion.choices[0].message.content });
+  } catch (err) {
+    console.error("OpenAI error:", err.message);
+
+    // Fallback to Gemini if configured
+    if (GEMINI_API_KEY) {
+      try {
+        const fallback = await fetchFromGemini(message);
+        return res.status(200).json({ message: fallback.choices[0].message.content });
+      } catch (gemErr) {
+        console.error("Gemini fallback error:", gemErr.message);
+      }
     }
 
-    const response = await openai.responses.create({
-      model: "gpt-4o-mini",
-      input: [
-        {
-          role: "system",
-          content: `
-You are ASKAI — an intelligent, accurate, and responsible AI assistant for learning, coding, productivity, scholarships, jobs, Liberia resources, and global current events.
-
-IMPORTANT GUIDELINES:
-- You do NOT have live access to the internet.
-- For questions about current leaders, politics, events, or rapidly changing information:
-  • Preface your answer with “As of my latest available information”.
-  • Provide the best answer you have and encourage the user to verify with a reliable recent source.
-- Liberia-specific known facts:
-  • The current President of Liberia (as of the latest available information) is Joseph Nyuma Boakai, who took office on January 22, 2024.
-
-Your goal is to be clear, honest, and helpful.
-          `,
-        },
-        {
-          role: "user",
-          content: message,
-        },
-      ],
-      max_output_tokens: 500,
+    // Final fallback message
+    return res.status(500).json({
+      message:
+        "⚠️ Sorry, AI cannot respond now. We are working on it. Please try again in a few seconds."
     });
-
-    // reply text
-    const text = response.output_text || "Sorry, I couldn't generate a response.";
-
-    return res.status(200).json({ message: text });
-
-  } catch (error) {
-    console.error("OpenAI API Error:", error);
-    return res.status(500).json({ message: "⚠️ AI service temporarily unavailable. Please try again later." });
   }
 }
