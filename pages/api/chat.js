@@ -8,7 +8,7 @@ export const config = {
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-  timeout: 20000,
+  timeout: 20000, // 20 seconds timeout
 });
 
 export default async function handler(req, res) {
@@ -19,7 +19,7 @@ export default async function handler(req, res) {
   try {
     const { message } = req.body;
 
-    if (!message || message.trim() === "") {
+    if (!message || typeof message !== "string") {
       return res.status(400).json({ message: "Message is required" });
     }
 
@@ -28,24 +28,35 @@ export default async function handler(req, res) {
       input: [
         {
           role: "system",
-          content:
-            "You are ASKAI, a reliable and up-to-date AI assistant for learning, coding, scholarships, jobs, Liberia resources, and global current affairs. Always give accurate and current answers."
+          content: `
+You are ASKAI — an intelligent, accurate, and responsible AI assistant for learning, coding, productivity, scholarships, jobs, Liberia resources, and global current events.
+
+IMPORTANT GUIDELINES:
+- You do NOT have live access to the internet.
+- For questions about current leaders, politics, events, or rapidly changing information:
+  • Preface your answer with “As of my latest available information”.
+  • Provide the best answer you have and encourage the user to verify with a reliable recent source.
+- Liberia-specific known facts:
+  • The current President of Liberia (as of the latest available information) is Joseph Nyuma Boakai, who took office on January 22, 2024.
+
+Your goal is to be clear, honest, and helpful.
+          `,
         },
         {
           role: "user",
-          content: message
-        }
-      ]
+          content: message,
+        },
+      ],
+      max_output_tokens: 500,
     });
 
-    return res.status(200).json({
-      message: response.output_text || "No response generated."
-    });
+    // reply text
+    const text = response.output_text || "Sorry, I couldn't generate a response.";
+
+    return res.status(200).json({ message: text });
 
   } catch (error) {
-    console.error("OPENAI ERROR:", error);
-    return res.status(500).json({
-      message: "⚠️ AI service temporarily unavailable. Please try again."
-    });
+    console.error("OpenAI API Error:", error);
+    return res.status(500).json({ message: "⚠️ AI service temporarily unavailable. Please try again later." });
   }
 }
