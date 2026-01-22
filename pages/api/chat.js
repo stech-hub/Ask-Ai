@@ -9,7 +9,7 @@ export default async function handler(req, res) {
 
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    console.error("OpenAI API key not found!");
+    console.error("OpenAI API key missing!");
     return res.status(500).json({ message: "⚠️ OpenAI API key not configured." });
   }
 
@@ -22,29 +22,42 @@ export default async function handler(req, res) {
 
     let liveInfo = "";
 
-    // Detect simple "current/present" questions
+    // Detect topics needing live info
     const lowerMsg = userMessage.toLowerCase();
-    if (
-      lowerMsg.includes("current president") ||
-      lowerMsg.includes("who is the president") ||
-      lowerMsg.includes("latest news") ||
-      lowerMsg.includes("today") ||
-      lowerMsg.includes("current")
-    ) {
-      // Fetch from Wikipedia API
-      const searchTerm = encodeURIComponent(userMessage);
-      const wikiRes = await fetch(
-        `https://en.wikipedia.org/api/rest_v1/page/summary/${searchTerm}`
-      );
-      if (wikiRes.ok) {
-        const wikiData = await wikiRes.json();
-        if (wikiData.extract) {
-          liveInfo = wikiData.extract;
+    const liveKeywords = [
+      "current president",
+      "who is the president",
+      "latest news",
+      "today",
+      "current",
+      "scholarship",
+      "competition",
+      "hackathon",
+      "job opportunities",
+      "visa",
+      "travel",
+      "internship"
+    ];
+
+    const needsLive = liveKeywords.some(keyword => lowerMsg.includes(keyword));
+
+    if (needsLive) {
+      try {
+        const searchTerm = encodeURIComponent(userMessage);
+        const wikiRes = await fetch(
+          `https://en.wikipedia.org/api/rest_v1/page/summary/${searchTerm}`
+        );
+
+        if (wikiRes.ok) {
+          const wikiData = await wikiRes.json();
+          if (wikiData.extract) liveInfo = wikiData.extract;
         }
+      } catch (wikiErr) {
+        console.warn("Wikipedia fetch failed, continuing safely:", wikiErr.message);
       }
     }
 
-    // Build messages array for OpenAI
+    // Construct OpenAI prompt
     const messages = [
       { role: "system", content: "You are a helpful AI assistant for students and learning." },
       { role: "user", content: userMessage + (liveInfo ? `\n\nUse this info to answer: ${liveInfo}` : "") }
