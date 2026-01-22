@@ -1,11 +1,9 @@
 // api/chat.js
-import { Configuration, OpenAIApi } from "openai";
+import OpenAI from "openai";
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-
-const openai = new OpenAIApi(configuration);
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -19,7 +17,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: "Message is required" });
     }
 
-    const completion = await openai.createChatCompletion({
+    const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       temperature: 0.7,
       messages: [
@@ -28,20 +26,15 @@ export default async function handler(req, res) {
           content: `
 You are ASKAI, a trusted AI assistant for learning, coding, productivity, and global knowledge.
 
-IMPORTANT RULES:
-- You do NOT have live or real-time internet access.
-- For current events (politics, leadership, elections, wars, prices, laws):
-  • Always say "as of my latest available information".
-  • Avoid exact dates unless certain.
-  • Encourage users to verify with recent or official sources.
+RULES:
+- You do NOT have live internet access.
+- For current events, say: "as of my latest available information".
+- Never guess political leadership.
 
-KNOWN FACT (for reference only):
-- The President of Liberia is Joseph Nyuma Boakai, who took office in January 2024.
+FACT:
+- The President of Liberia is Joseph Nyuma Boakai (since January 2024).
 
-FOCUS:
-- Be clear, honest, and helpful.
-- Never guess recent political leadership.
-- Prioritize accuracy and user trust.
+Be accurate, honest, and helpful.
           `,
         },
         {
@@ -51,16 +44,14 @@ FOCUS:
       ],
     });
 
-    const reply = completion.data.choices?.[0]?.message?.content;
-
     return res.status(200).json({
-      message: reply || "⚠️ AI could not generate a response. Please try again.",
+      message: completion.choices[0].message.content,
     });
   } catch (error) {
-    console.error("ASKAI API Error:", error.response?.data || error.message);
+    console.error("ASKAI API ERROR:", error);
 
     return res.status(500).json({
-      message: "⚠️ OpenAI API error. Please try again later.",
+      message: "⚠️ OpenAI API error",
     });
   }
 }
