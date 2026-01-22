@@ -15,7 +15,7 @@ export default function Home() {
   const [openCourses, setOpenCourses] = useState(false);
   const [openYear, setOpenYear] = useState(null);
   const [openUniversities, setOpenUniversities] = useState(false);
-  const [openOpportunities, setOpenOpportunities] = useState(false);
+  const [openFeatures, setOpenFeatures] = useState(false);
 
   const courses = {
     "Freshman 1": ["Computer Basics", "Digital Literacy", "Intro to Programming (Python)"],
@@ -42,28 +42,53 @@ export default function Home() {
     { name: "Liberia International Christian College", url: "https://licc.edu.lr" },
   ];
 
-  const opportunities = [
-    { name: "🌍 Global Jobs & Careers", message: "Show me current global job opportunities." },
-    { name: "✈️ Travel & Visa Information", message: "Provide visa requirements and travel info by country." },
-    { name: "📰 Global News Updates", message: "Give me the latest world news updates." },
-    { name: "🎓 Free Scholarships (High School Graduates)", message: "Show me free scholarships for high school graduates from Liberia." },
-    { name: "📡 Telecom Networks Worldwide", message: "List major telecom networks in Africa, America, Asia, Europe, and Oceania." },
-    { name: "💻 Online Freelance Jobs", message: "Show popular freelance websites for Africans." },
-    { name: "📚 Online Learning Platforms", message: "Recommend online courses and free learning platforms." },
-    { name: "🚀 Startup & Entrepreneurship Opportunities", message: "Show startup programs and grants globally." },
-    { name: "🏦 Microfinance & Funding", message: "Show available microfinance programs for students and young entrepreneurs." },
-    { name: "🩺 Health & Medical Opportunities", message: "Find internships and volunteer programs in healthcare globally." },
-    { name: "🌱 Environmental & NGO Programs", message: "Show global volunteer and scholarship programs in sustainability." },
-    { name: "🎨 Art, Music & Creativity Grants", message: "Show grants and competitions for creatives worldwide." },
-    { name: "🏆 Competitions & Hackathons", message: "Show global competitions and hackathons open to students." },
-    { name: "🤝 Mentorship & Networking Programs", message: "Recommend mentorship opportunities for students and professionals." },
-    { name: "📈 Business & Investment Opportunities", message: "Provide info on global business expansion opportunities." },
+  const otherFeatures = [
+    { name: "Jobs & Careers", links: [
+      { name: "LinkedIn Jobs", url: "https://www.linkedin.com/jobs/" },
+      { name: "Indeed", url: "https://www.indeed.com/" },
+      { name: "Glassdoor", url: "https://www.glassdoor.com/index.htm" },
+      { name: "Monster", url: "https://www.monster.com/" },
+    ]},
+    { name: "Scholarships (Free Programs)", links: [
+      { name: "ScholarshipPortal", url: "https://www.scholarshipportal.com/" },
+      { name: "DAAD (Germany)", url: "https://www.daad.de/en/" },
+      { name: "Chevening (UK)", url: "https://www.chevening.org/" },
+      { name: "Fulbright Program (USA)", url: "https://foreign.fulbrightonline.org/" },
+    ]},
+    { name: "Travel & Visa Info", links: [
+      { name: "Travelbriefing", url: "https://travelbriefing.org/" },
+      { name: "US Travel Visa Info", url: "https://travel.state.gov/" },
+      { name: "Schengen Visa Info", url: "https://www.schengenvisainfo.com/" },
+    ]},
+    { name: "News", links: [
+      { name: "BBC News", url: "https://www.bbc.com/news" },
+      { name: "CNN", url: "https://edition.cnn.com/" },
+      { name: "Al Jazeera", url: "https://www.aljazeera.com/" },
+    ]},
+    { name: "Telecommunications", links: [
+      { name: "MTN Africa", url: "https://www.mtn.com/" },
+      { name: "Vodafone", url: "https://www.vodafone.com/" },
+      { name: "Airtel", url: "https://www.airtel.in/" },
+      { name: "Orange", url: "https://www.orange.com/en" },
+    ]},
+    { name: "Other Useful Features", links: [
+      { name: "FreeCodeCamp", url: "https://www.freecodecamp.org/" },
+      { name: "OpenAI Tools", url: "https://openai.com/" },
+      { name: "CoinMarketCap", url: "https://coinmarketcap.com/" },
+      { name: "Weather Updates", url: "https://weather.com/" },
+      { name: "XE Currency Converter", url: "https://www.xe.com/" },
+      { name: "Flight Booking (Skyscanner)", url: "https://www.skyscanner.net/" },
+      { name: "Hotels Booking (Booking.com)", url: "https://www.booking.com/" },
+      { name: "Public APIs (RapidAPI)", url: "https://rapidapi.com/" },
+      { name: "COVID-19 Info (WHO)", url: "https://www.who.int/" },
+      { name: "Eventbrite (Events)", url: "https://www.eventbrite.com/" },
+      { name: "University Admissions (TopUniversities)", url: "https://www.topuniversities.com/" },
+      { name: "Startup Funding (Crunchbase)", url: "https://www.crunchbase.com/" },
+    ]},
   ];
 
-  // Send message to API
   const sendMessage = async (msg) => {
     if (!msg?.trim()) return;
-
     const newMessages = [...messages, { type: "user", text: msg }];
     setMessages(newMessages);
 
@@ -73,20 +98,12 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: msg }),
       });
-
       const data = await res.json();
-
-      if (!data.message) {
-        throw new Error("API returned empty message");
-      }
-
+      if (!data.message) throw new Error("API returned empty message");
       setMessages([...newMessages, { type: "ai", text: data.message }]);
     } catch (err) {
       console.error("Chat error:", err);
-      setMessages([
-        ...newMessages,
-        { type: "ai", text: "⚠️ AI is temporarily unavailable. Please try again in a moment." },
-      ]);
+      setMessages([...newMessages, { type: "ai", text: "⚠️ AI is temporarily unavailable. Please try again in a moment." }]);
     }
   };
 
@@ -103,14 +120,8 @@ export default function Home() {
     <>
       <Head>
         <title>ASKAI – AI Assistant & Learning Platform</title>
-        <meta
-          name="description"
-          content="ASKAI is your free AI learning assistant. Chat with AI for coding help, access CS courses, find scholarships, jobs, and download the ASKAI app in Liberia and worldwide."
-        />
-        <meta
-          name="keywords"
-          content="ASKAI AI assistant, ASKAI learning platform, ASKAI coding help, ASKAI Liberia, ASKAI CS courses, free AI learning assistant for students, ask AI for coding help online, Liberia online scholarships and jobs, download ASKAI app Liberia, AI assistant for learning and productivity, AskAI, Ask AI"
-        />
+        <meta name="description" content="ASKAI is your free AI learning assistant. Chat with AI for coding help, access CS courses, find scholarships, jobs, and download the ASKAI app in Liberia and worldwide." />
+        <meta name="keywords" content="ASKAI AI assistant, ASKAI learning platform, ASKAI coding help, ASKAI Liberia, ASKAI CS courses, free AI learning assistant for students, ask AI for coding help online, Liberia online scholarships and jobs, download ASKAI app Liberia, AI assistant for learning and productivity, AskAI, Ask AI" />
       </Head>
 
       <div className="app">
@@ -131,42 +142,55 @@ export default function Home() {
           <a href="#!" onClick={() => setOpenUniversities(!openUniversities)}>
             🎓 University Portals (Liberia) {openUniversities ? "▲" : "▼"}
           </a>
-          {openUniversities && universitiesLiberia.map((uni) => (
-            <a key={uni.name} href={uni.url} target="_blank" style={{ paddingLeft: "15px", display: "block" }}>{uni.name}</a>
-          ))}
+          {openUniversities &&
+            universitiesLiberia.map((uni) => (
+              <a key={uni.name} href={uni.url} target="_blank" style={{ paddingLeft: "15px", display: "block" }}>{uni.name}</a>
+            ))}
 
           {/* Free CS Courses */}
           <a href="#!" onClick={() => setOpenCourses(!openCourses)}>
             🎓 Free CS Courses {openCourses ? "▲" : "▼"}
           </a>
-          {openCourses && Object.keys(courses).map((year) => (
-            <div key={year} style={{ paddingLeft: "15px" }}>
-              <a href="#!" onClick={() => setOpenYear(openYear === year ? null : year)}>
-                {year} {openYear === year ? "▲" : "▼"}
-              </a>
-              {openYear === year && courses[year].map((course) => (
-                <a key={course} href="#!" style={{ paddingLeft: "20px", fontSize: "0.9rem" }} onClick={() => sendMessage(`Explain ${course} in simple terms.`)}>
-                  {course}
+          {openCourses &&
+            Object.keys(courses).map((year) => (
+              <div key={year} style={{ paddingLeft: "15px" }}>
+                <a href="#!" onClick={() => setOpenYear(openYear === year ? null : year)}>
+                  {year} {openYear === year ? "▲" : "▼"}
                 </a>
-              ))}
-            </div>
-          ))}
+                {openYear === year &&
+                  courses[year].map((course) => (
+                    <a key={course} href="#!" style={{ paddingLeft: "20px", fontSize: "0.9rem" }} onClick={() => sendMessage(`Explain ${course} in simple terms.`)}>
+                      {course}
+                    </a>
+                  ))}
+              </div>
+            ))}
 
-          {/* Opportunities & Resources */}
-          <a href="#!" onClick={() => setOpenOpportunities(!openOpportunities)}>
-            🌟 Opportunities & Resources {openOpportunities ? "▲" : "▼"}
+          {/* Other Features */}
+          <a href="#!" onClick={() => setOpenFeatures(!openFeatures)}>
+            🌐 Global Opportunities & More {openFeatures ? "▲" : "▼"}
           </a>
-          {openOpportunities && opportunities.map((item) => (
-            <a key={item.name} href="#!" style={{ paddingLeft: "15px", display: "block", fontSize: "0.95rem" }} onClick={() => sendMessage(item.message)}>
-              {item.name}
-            </a>
-          ))}
+          {openFeatures &&
+            otherFeatures.map((cat) => (
+              <div key={cat.name} style={{ paddingLeft: "15px" }}>
+                <a href="#!" style={{ fontWeight: "bold" }}>{cat.name}</a>
+                {cat.links.map((link) => (
+                  <a key={link.name} href={link.url} target="_blank" style={{ paddingLeft: "20px", fontSize: "0.9rem" }}>
+                    {link.name}
+                  </a>
+                ))}
+              </div>
+            ))}
 
-          {/* Contact & Hire */}
+          {/* Contact */}
           <div style={{ paddingTop: "10px", borderTop: "1px solid #eee" }}>
-            <a href="https://wa.me/231777789356" target="_blank" style={{ color: "white", background: "#25D366", padding: "8px 14px", borderRadius: "6px", display: "inline-block", marginBottom: "6px", textDecoration: "none" }}>💬 Contact Me on WhatsApp</a>
+            <a href="https://wa.me/231777789356" target="_blank" style={{ color: "white", background: "#25D366", padding: "8px 14px", borderRadius: "6px", display: "inline-block", marginBottom: "6px", textDecoration: "none" }}>
+              💬 Contact Me on WhatsApp
+            </a>
             <br />
-            <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank" style={{ color: "white", background: "#1877F2", padding: "8px 14px", borderRadius: "6px", display: "inline-block", textDecoration: "none" }}>📘 Follow Me on Facebook / Hire Me</a>
+            <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank" style={{ color: "white", background: "#1877F2", padding: "8px 14px", borderRadius: "6px", display: "inline-block", textDecoration: "none" }}>
+              📘 Follow Me on Facebook / Hire Me
+            </a>
           </div>
         </div>
 
@@ -181,13 +205,18 @@ export default function Home() {
 
         {/* Input */}
         <div className="input">
-          <textarea placeholder="Ask me anything..." value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              sendMessage(input);
-              setInput("");
-            }
-          }}/>
+          <textarea
+            placeholder="Ask me anything..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage(input);
+                setInput("");
+              }
+            }}
+          />
           <button onClick={() => { sendMessage(input); setInput(""); }}>Send</button>
         </div>
 
@@ -198,7 +227,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Basic CSS */}
       <style jsx>{`
         .app { display: flex; flex-direction: column; height: 100vh; font-family: Arial, sans-serif; }
         .header { background: #0a74da; color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; }
