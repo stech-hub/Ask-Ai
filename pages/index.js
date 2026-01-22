@@ -15,6 +15,7 @@ export default function Home() {
   const [openCourses, setOpenCourses] = useState(false);
   const [openYear, setOpenYear] = useState(null);
   const [openUniversities, setOpenUniversities] = useState(false);
+  const [openOpportunities, setOpenOpportunities] = useState(false);
 
   const courses = {
     "Freshman 1": ["Computer Basics", "Digital Literacy", "Intro to Programming (Python)"],
@@ -41,6 +42,24 @@ export default function Home() {
     { name: "Liberia International Christian College", url: "https://licc.edu.lr" },
   ];
 
+  const opportunities = [
+    { name: "🌍 Global Jobs & Careers", message: "Show me current global job opportunities." },
+    { name: "✈️ Travel & Visa Information", message: "Provide visa requirements and travel info by country." },
+    { name: "📰 Global News Updates", message: "Give me the latest world news updates." },
+    { name: "🎓 Free Scholarships (High School Graduates)", message: "Show me free scholarships for high school graduates from Liberia." },
+    { name: "📡 Telecom Networks Worldwide", message: "List major telecom networks in Africa, America, Asia, Europe, and Oceania." },
+    { name: "💻 Online Freelance Jobs", message: "Show popular freelance websites for Africans." },
+    { name: "📚 Online Learning Platforms", message: "Recommend online courses and free learning platforms." },
+    { name: "🚀 Startup & Entrepreneurship Opportunities", message: "Show startup programs and grants globally." },
+    { name: "🏦 Microfinance & Funding", message: "Show available microfinance programs for students and young entrepreneurs." },
+    { name: "🩺 Health & Medical Opportunities", message: "Find internships and volunteer programs in healthcare globally." },
+    { name: "🌱 Environmental & NGO Programs", message: "Show global volunteer and scholarship programs in sustainability." },
+    { name: "🎨 Art, Music & Creativity Grants", message: "Show grants and competitions for creatives worldwide." },
+    { name: "🏆 Competitions & Hackathons", message: "Show global competitions and hackathons open to students." },
+    { name: "🤝 Mentorship & Networking Programs", message: "Recommend mentorship opportunities for students and professionals." },
+    { name: "📈 Business & Investment Opportunities", message: "Provide info on global business expansion opportunities." },
+  ];
+
   // Send message to API
   const sendMessage = async (msg) => {
     if (!msg?.trim()) return;
@@ -57,7 +76,6 @@ export default function Home() {
 
       const data = await res.json();
 
-      // Handle API error messages safely
       if (!data.message) {
         throw new Error("API returned empty message");
       }
@@ -72,7 +90,6 @@ export default function Home() {
     }
   };
 
-  // Auto-scroll chat
   useEffect(() => {
     chatRef.current.scrollTop = chatRef.current.scrollHeight;
   }, [messages]);
@@ -100,68 +117,56 @@ export default function Home() {
         {/* Header */}
         <div className="header">
           <h1>ASKAI</h1>
-          <div className="menu-btn" onClick={toggleMenu}>
-            ☰
-          </div>
+          <div className="menu-btn" onClick={toggleMenu}>☰</div>
         </div>
 
         {/* Side Menu */}
         <div className="menu" id="menu">
           <a href="#">🏠 Home</a>
           <a href="https://full-task-ai.vercel.app/" target="_blank">🤖 AI Tools</a>
-
           <a href="https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk" target="_blank">📱 Download ASKAI App</a>
           <a href="https://github.com/stech-hub/bionurseapk-website/releases/download/v1/myapp.apk" target="_blank">📱 Download Android App</a>
 
+          {/* University Portals */}
           <a href="#!" onClick={() => setOpenUniversities(!openUniversities)}>
             🎓 University Portals (Liberia) {openUniversities ? "▲" : "▼"}
           </a>
-          {openUniversities &&
-            universitiesLiberia.map((uni) => (
-              <a key={uni.name} href={uni.url} target="_blank" style={{ paddingLeft: "15px", display: "block" }}>
-                {uni.name}
-              </a>
-            ))}
+          {openUniversities && universitiesLiberia.map((uni) => (
+            <a key={uni.name} href={uni.url} target="_blank" style={{ paddingLeft: "15px", display: "block" }}>{uni.name}</a>
+          ))}
 
+          {/* Free CS Courses */}
           <a href="#!" onClick={() => setOpenCourses(!openCourses)}>
             🎓 Free CS Courses {openCourses ? "▲" : "▼"}
           </a>
-          {openCourses &&
-            Object.keys(courses).map((year) => (
-              <div key={year} style={{ paddingLeft: "15px" }}>
-                <a href="#!" onClick={() => setOpenYear(openYear === year ? null : year)}>
-                  {year} {openYear === year ? "▲" : "▼"}
+          {openCourses && Object.keys(courses).map((year) => (
+            <div key={year} style={{ paddingLeft: "15px" }}>
+              <a href="#!" onClick={() => setOpenYear(openYear === year ? null : year)}>
+                {year} {openYear === year ? "▲" : "▼"}
+              </a>
+              {openYear === year && courses[year].map((course) => (
+                <a key={course} href="#!" style={{ paddingLeft: "20px", fontSize: "0.9rem" }} onClick={() => sendMessage(`Explain ${course} in simple terms.`)}>
+                  {course}
                 </a>
-                {openYear === year &&
-                  courses[year].map((course) => (
-                    <a
-                      key={course}
-                      href="#!"
-                      style={{ paddingLeft: "20px", fontSize: "0.9rem" }}
-                      onClick={() => sendMessage(`Explain ${course} in simple terms.`)}
-                    >
-                      {course}
-                    </a>
-                  ))}
-              </div>
-            ))}
+              ))}
+            </div>
+          ))}
 
+          {/* Opportunities & Resources */}
+          <a href="#!" onClick={() => setOpenOpportunities(!openOpportunities)}>
+            🌟 Opportunities & Resources {openOpportunities ? "▲" : "▼"}
+          </a>
+          {openOpportunities && opportunities.map((item) => (
+            <a key={item.name} href="#!" style={{ paddingLeft: "15px", display: "block", fontSize: "0.95rem" }} onClick={() => sendMessage(item.message)}>
+              {item.name}
+            </a>
+          ))}
+
+          {/* Contact & Hire */}
           <div style={{ paddingTop: "10px", borderTop: "1px solid #eee" }}>
-            <a
-              href="https://wa.me/231777789356"
-              target="_blank"
-              style={{ color: "white", background: "#25D366", padding: "8px 14px", borderRadius: "6px", display: "inline-block", marginBottom: "6px", textDecoration: "none" }}
-            >
-              💬 Contact Me on WhatsApp
-            </a>
+            <a href="https://wa.me/231777789356" target="_blank" style={{ color: "white", background: "#25D366", padding: "8px 14px", borderRadius: "6px", display: "inline-block", marginBottom: "6px", textDecoration: "none" }}>💬 Contact Me on WhatsApp</a>
             <br />
-            <a
-              href="https://www.facebook.com/profile.php?id=61583456361691"
-              target="_blank"
-              style={{ color: "white", background: "#1877F2", padding: "8px 14px", borderRadius: "6px", display: "inline-block", textDecoration: "none" }}
-            >
-              📘 Follow Me on Facebook / Hire Me
-            </a>
+            <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank" style={{ color: "white", background: "#1877F2", padding: "8px 14px", borderRadius: "6px", display: "inline-block", textDecoration: "none" }}>📘 Follow Me on Facebook / Hire Me</a>
           </div>
         </div>
 
@@ -169,43 +174,27 @@ export default function Home() {
         <div className="chat" ref={chatRef}>
           {messages.map((msg, idx) => (
             <div key={idx} className={`msg ${msg.type}`}>
-              {msg.text.split("\n").map((line, i) => (
-                <div key={i}>{line}</div>
-              ))}
+              {msg.text.split("\n").map((line, i) => <div key={i}>{line}</div>)}
             </div>
           ))}
         </div>
 
         {/* Input */}
         <div className="input">
-          <textarea
-            placeholder="Ask me anything..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage(input);
-                setInput("");
-              }
-            }}
-          />
-          <button
-            onClick={() => {
+          <textarea placeholder="Ask me anything..." value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
               sendMessage(input);
               setInput("");
-            }}
-          >
-            Send
-          </button>
+            }
+          }}/>
+          <button onClick={() => { sendMessage(input); setInput(""); }}>Send</button>
         </div>
 
         {/* Footer */}
         <div className="footer">
           Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷 |{" "}
-          <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank">
-            Facebook
-          </a>
+          <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank">Facebook</a>
         </div>
       </div>
 
@@ -226,4 +215,4 @@ export default function Home() {
       `}</style>
     </>
   );
-}
+            }
