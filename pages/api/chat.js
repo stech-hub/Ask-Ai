@@ -22,7 +22,7 @@ export default async function handler(req, res) {
         {
           role: "system",
           content:
-            "You are ASKAI, an AI assistant for learning, coding, scholarships, jobs, and global current information. Always give up-to-date and accurate answers."
+            "You are ASKAI, an AI assistant for learning, coding, scholarships, jobs, and up-to-date global information."
         },
         {
           role: "user",
@@ -36,9 +36,7 @@ export default async function handler(req, res) {
       message: completion.choices[0].message.content
     });
   } catch (error) {
-    console.error("OpenAI Error:", error);
-    res.status(500).json({
-      message: "⚠️ OpenAI API error"
-    });
+    console.error(error);
+    res.status(500).json({ message: "⚠️ OpenAI API error" });
   }
 }
