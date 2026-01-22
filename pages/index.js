@@ -4,7 +4,10 @@ import Head from "next/head";
 
 export default function Home() {
   const [messages, setMessages] = useState([
-    { type: "ai", text: "👋 Welcome to ASKAI!\nYour intelligent assistant for learning, productivity, and coding." },
+    {
+      type: "ai",
+      text: "👋 Welcome to ASKAI!\nYour intelligent assistant for learning, productivity, and coding.",
+    },
   ]);
   const [input, setInput] = useState("");
   const chatRef = useRef();
@@ -57,11 +60,10 @@ export default function Home() {
     { name: "📈 Business & Investment Opportunities", message: "Provide info on global business expansion opportunities." },
   ];
 
-  // Send message to API
+  // Send message to OpenAI API
   const sendMessage = async (msg) => {
-    if (!msg.trim()) return;
+    if (!msg?.trim()) return;
 
-    // Show user message immediately
     const newMessages = [...messages, { type: "user", text: msg }];
     setMessages(newMessages);
 
@@ -74,14 +76,14 @@ export default function Home() {
 
       const data = await res.json();
 
-      // Show AI response
-      setMessages([...newMessages, { type: "ai", text: data.message || "⚠️ AI is temporarily unavailable." }]);
+      setMessages([...newMessages, { type: "ai", text: data.message }]);
     } catch (err) {
+      console.error("Chat error:", err);
       setMessages([...newMessages, { type: "ai", text: "⚠️ AI is temporarily unavailable. Please try again later." }]);
     }
   };
 
-  // Auto-scroll chat
+  // Auto-scroll
   useEffect(() => {
     chatRef.current.scrollTop = chatRef.current.scrollHeight;
   }, [messages]);
@@ -95,23 +97,23 @@ export default function Home() {
     <>
       <Head>
         <title>ASKAI – AI Assistant & Learning Platform</title>
+        <meta name="description" content="ASKAI is your free AI learning assistant. Chat with AI for coding help, access CS courses, find scholarships, jobs, and download the ASKAI app in Liberia and worldwide." />
+        <meta name="keywords" content="ASKAI AI assistant, ASKAI learning platform, ASKAI coding help, ASKAI Liberia, ASKAI CS courses, free AI learning assistant for students, ask AI for coding help online, Liberia online scholarships and jobs, download ASKAI app Liberia, AI assistant for learning and productivity" />
       </Head>
 
       <div className="app">
-        {/* Header */}
         <div className="header">
           <h1>ASKAI</h1>
           <div className="menu-btn" onClick={toggleMenu}>☰</div>
         </div>
 
-        {/* Side Menu */}
+        {/* Menu */}
         <div className="menu" id="menu">
           <a href="#">🏠 Home</a>
           <a href="https://full-task-ai.vercel.app/" target="_blank">🤖 AI Tools</a>
           <a href="https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk" target="_blank">📱 Download ASKAI App</a>
           <a href="https://github.com/stech-hub/bionurseapk-website/releases/download/v1/myapp.apk" target="_blank">📱 Download Android App</a>
 
-          {/* University Portals */}
           <a href="#!" onClick={() => setOpenUniversities(!openUniversities)}>
             🎓 University Portals (Liberia) {openUniversities ? "▲" : "▼"}
           </a>
@@ -119,7 +121,6 @@ export default function Home() {
             <a key={uni.name} href={uni.url} target="_blank" style={{ paddingLeft: "15px", display: "block" }}>{uni.name}</a>
           ))}
 
-          {/* Free CS Courses */}
           <a href="#!" onClick={() => setOpenCourses(!openCourses)}>
             🎓 Free CS Courses {openCourses ? "▲" : "▼"}
           </a>
@@ -136,7 +137,6 @@ export default function Home() {
             </div>
           ))}
 
-          {/* Opportunities & Resources */}
           <a href="#!" onClick={() => setOpenOpportunities(!openOpportunities)}>
             🌟 Opportunities & Resources {openOpportunities ? "▲" : "▼"}
           </a>
@@ -146,7 +146,6 @@ export default function Home() {
             </a>
           ))}
 
-          {/* Contact & Hire */}
           <div style={{ paddingTop: "10px", borderTop: "1px solid #eee" }}>
             <a href="https://wa.me/231777789356" target="_blank" style={{ color: "white", background: "#25D366", padding: "8px 14px", borderRadius: "6px", display: "inline-block", marginBottom: "6px", textDecoration: "none" }}>💬 Contact Me on WhatsApp</a>
             <br />
@@ -154,7 +153,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Chat Area */}
+        {/* Chat */}
         <div className="chat" ref={chatRef}>
           {messages.map((msg, idx) => (
             <div key={idx} className={`msg ${msg.type}`}>
@@ -163,31 +162,23 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Input */}
         <div className="input">
-          <textarea
-            placeholder="Ask me anything..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage(input);
-                setInput("");
-              }
-            }}
-          />
+          <textarea placeholder="Ask me anything..." value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              sendMessage(input);
+              setInput("");
+            }
+          }} />
           <button onClick={() => { sendMessage(input); setInput(""); }}>Send</button>
         </div>
 
-        {/* Footer */}
         <div className="footer">
-          Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷 |{" "}
-          <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank">Facebook</a>
+          Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷 | <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank">Facebook</a>
         </div>
       </div>
 
-      {/* Basic CSS */}
+      {/* CSS */}
       <style jsx>{`
         .app { display: flex; flex-direction: column; height: 100vh; font-family: Arial, sans-serif; }
         .header { background: #0a74da; color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; }
