@@ -1,64 +1,54 @@
 // pages/index.js
 import { useState, useRef, useEffect } from "react";
 import Head from "next/head";
+import {
+  signInWithGoogle,
+  logout,
+  saveMessages,
+  loadMessages,
+} from "../firebase";
 
 export default function Home() {
-  // Load messages from localStorage if available, else default AI greeting
-  const [messages, setMessages] = useState(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("askai_messages");
-      return saved
-        ? JSON.parse(saved)
-        : [
-            {
-              type: "ai",
-              text: "👋 Welcome to ASKAI!\nYour intelligent assistant for learning, productivity, and coding.",
-            },
-          ];
-    }
-    return [
-      {
-        type: "ai",
-        text: "👋 Welcome to ASKAI!\nYour intelligent assistant for learning, productivity, and coding.",
-      },
-    ];
-  });
-
+  const [user, setUser] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [openMenu, setOpenMenu] = useState(false);
+  const [openSubmenu, setOpenSubmenu] = useState({});
   const chatRef = useRef();
 
-  const [openCourses, setOpenCourses] = useState(false);
-  const [openYear, setOpenYear] = useState(null);
-  const [openUniversities, setOpenUniversities] = useState(false);
-
-  const courses = {
-    "Freshman 1": ["Computer Basics", "Digital Literacy", "Intro to Programming (Python)"],
-    "Freshman 2": ["Web Development (HTML, CSS, JS)", "Discrete Math"],
-    Sophomore: ["Data Structures", "Algorithms", "Databases"],
-    Junior: ["Operating Systems", "Software Engineering", "Computer Networks"],
-    Senior: ["AI & Machine Learning", "Cybersecurity", "Final Year Projects"],
+  const toggleSubmenu = (key) => {
+    setOpenSubmenu({ ...openSubmenu, [key]: !openSubmenu[key] });
   };
 
-  const universitiesLiberia = [
-    { name: "University of Liberia - UL", url: "https://www.ul.edu.lr" },
-    { name: "William V.S. Tubman University", url: "https://wvsu.edu.lr" },
-    { name: "Nimba University", url: "https://nimbauniversity.edu.lr" },
-    { name: "Margibi University", url: "https://www.margibiuniversity.edu.lr" },
-    { name: "Cuttington University", url: "https://www.cuttington.edu.lr" },
-    { name: "African Methodist Episcopal University", url: "https://www.ameu.edu.lr" },
-    { name: "United Methodist University", url: "https://umu.edu.lr" },
-    { name: "Stella Maris Polytechnic University", url: "https://smpu.edu.lr" },
-    { name: "Adventist University of West Africa", url: "https://www.auwa.edu.lr" },
-    { name: "Starz University", url: "https://www.starzuniversity.edu.lr" },
-    { name: "Smythe University College", url: "https://icampus.smythe.telligentgh.com/" },
-    { name: "African Methodist Episcopal Zion University", url: "https://amezion.edu.lr" },
-    { name: "African Bible College University", url: "https://abcuniversity.org" },
-    { name: "Liberia International Christian College", url: "https://licc.edu.lr" },
-  ];
+  // Google Login
+  const handleGoogleLogin = async () => {
+    try {
+      const signedInUser = await signInWithGoogle();
+      setUser(signedInUser);
 
-  // Send message to OpenAI API
+      // Load past chats
+      const pastMessages = await loadMessages(signedInUser.uid);
+      if (pastMessages.length > 0) setMessages(pastMessages);
+      else
+        setMessages([
+          {
+            type: "ai",
+            text: `👋 Welcome ${signedInUser.displayName}!\nYour intelligent assistant is ready.`,
+          },
+        ]);
+    } catch (err) {
+      console.error("Google login error:", err);
+    }
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    setUser(null);
+    setMessages([]);
+  };
+
   const sendMessage = async (msg) => {
-    if (!msg?.trim()) return;
+    if (!msg?.trim() || !user) return;
 
     const newMessages = [...messages, { type: "user", text: msg }];
     setMessages(newMessages);
@@ -68,158 +58,269 @@ export default function Home() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          // Send last 10 messages as context
           messages: newMessages.slice(-10).map((m) => ({
             role: m.type === "ai" ? "assistant" : "user",
             content: m.text,
           })),
         }),
       });
-
       const data = await res.json();
-      if (!data.message) throw new Error("API returned empty message");
-
-      const updatedMessages = [...newMessages, { type: "ai", text: data.message }];
+      const updatedMessages = [
+        ...newMessages,
+        { type: "ai", text: data.message || "⚠️ AI unavailable." },
+      ];
       setMessages(updatedMessages);
-
-      // Save to localStorage for memory
-      localStorage.setItem("askai_messages", JSON.stringify(updatedMessages));
+      await saveMessages(user.uid, updatedMessages);
     } catch (err) {
-      console.error("Chat error:", err);
-      const fallback = [...newMessages, { type: "ai", text: "⚠️ AI is temporarily unavailable. Please try again in a moment." }];
+      console.error(err);
+      const fallback = [
+        ...newMessages,
+        { type: "ai", text: "⚠️ AI temporarily unavailable." },
+      ];
       setMessages(fallback);
-      localStorage.setItem("askai_messages", JSON.stringify(fallback));
+      await saveMessages(user.uid, fallback);
     }
   };
 
-  // Auto-scroll chat
   useEffect(() => {
-    chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
   }, [messages]);
 
-  const toggleMenu = () => {
-    const menu = document.getElementById("menu");
-    menu.style.display = menu.style.display === "block" ? "none" : "block";
+  // Predefined links
+  const resources = {
+    "Jobs & Career": [
+      { name: "LinkedIn Jobs", url: "https://www.linkedin.com/jobs/" },
+      { name: "Indeed", url: "https://www.indeed.com/" },
+      { name: "Glassdoor", url: "https://www.glassdoor.com/index.htm" },
+      { name: "Monster", url: "https://www.monster.com/" },
+    ],
+    "Scholarships (Liberia HS Graduates)": [
+      { name: "DAAD", url: "https://www.daad.de/en/" },
+      { name: "Chevening", url: "https://www.chevening.org/" },
+      { name: "Fulbright", url: "https://foreign.fulbrightonline.org/" },
+      { name: "Erasmus+", url: "https://erasmus-plus.ec.europa.eu/" },
+    ],
+    "Travel & Visa Info": [
+      { name: "US Visa Info", url: "https://travel.state.gov/content/travel/en/us-visas.html" },
+      { name: "Schengen Visa", url: "https://www.schengenvisainfo.com/" },
+      { name: "Canada Visa", url: "https://www.canada.ca/en/immigration-refugees-citizenship/services/visit-canada.html" },
+    ],
+    "News & Media": [
+      { name: "BBC", url: "https://www.bbc.com/" },
+      { name: "CNN", url: "https://edition.cnn.com/" },
+      { name: "Al Jazeera", url: "https://www.aljazeera.com/" },
+    ],
+    "Telecommunications (Global)": [
+      { name: "MTN Africa", url: "https://www.mtn.com/" },
+      { name: "Airtel Africa", url: "https://www.airtel.africa/" },
+      { name: "Verizon US", url: "https://www.verizon.com/" },
+      { name: "AT&T US", url: "https://www.att.com/" },
+      { name: "Vodafone Global", url: "https://www.vodafone.com/" },
+    ],
+    "Recommended Features": [
+      { name: "Free Coding Courses", url: "https://www.freecodecamp.org/" },
+      { name: "AI Tools Hub", url: "https://full-task-ai.vercel.app/" },
+      { name: "Resume Builder", url: "https://resumegenius.com/" },
+      { name: "Portfolio Maker", url: "https://www.canva.com/" },
+      { name: "Online Learning Platforms", url: "https://www.coursera.org/" },
+      { name: "Programming Challenges", url: "https://www.hackerrank.com/" },
+      { name: "Open Source Projects", url: "https://github.com/explore" },
+    ],
   };
 
   return (
     <>
       <Head>
-        <title>ASKAI – AI Assistant & Learning Platform</title>
-        <meta
-          name="description"
-          content="ASKAI is your free AI learning assistant. Chat with AI for coding help, access CS courses, find scholarships, jobs, and download the ASKAI app in Liberia and worldwide."
-        />
+        <title>ASKAI – AI Assistant & Global Resources</title>
       </Head>
 
       <div className="app">
-        {/* Header */}
-        <div className="header">
-          <h1>ASKAI</h1>
-          <div className="menu-btn" onClick={toggleMenu}>☰</div>
-        </div>
-
-        {/* Side Menu */}
-        <div className="menu" id="menu">
-          <a href="#">🏠 Home</a>
-          <a href="https://full-task-ai.vercel.app/" target="_blank">🤖 AI Tools</a>
-          <a href="https://github.com/stech-hub/Ask-Ai/releases/download/askai/app-release.apk" target="_blank">📱 Download ASKAI App</a>
-          <a href="https://github.com/stech-hub/bionurseapk-website/releases/download/v1/myapp.apk" target="_blank">📱 Download Android App</a>
-
-          {/* University Portals */}
-          <a href="#!" onClick={() => setOpenUniversities(!openUniversities)}>
-            🎓 University Portals (Liberia) {openUniversities ? "▲" : "▼"}
-          </a>
-          {openUniversities &&
-            universitiesLiberia.map((uni) => (
-              <a key={uni.name} href={uni.url} target="_blank" style={{ paddingLeft: "15px", display: "block" }}>
-                {uni.name}
-              </a>
-            ))}
-
-          {/* Free CS Courses */}
-          <a href="#!" onClick={() => setOpenCourses(!openCourses)}>
-            🎓 Free CS Courses {openCourses ? "▲" : "▼"}
-          </a>
-          {openCourses &&
-            Object.keys(courses).map((year) => (
-              <div key={year} style={{ paddingLeft: "15px" }}>
-                <a href="#!" onClick={() => setOpenYear(openYear === year ? null : year)}>
-                  {year} {openYear === year ? "▲" : "▼"}
-                </a>
-                {openYear === year &&
-                  courses[year].map((course) => (
-                    <a
-                      key={course}
-                      href="#!"
-                      style={{ paddingLeft: "20px", fontSize: "0.9rem" }}
-                      onClick={() => sendMessage(`Explain ${course} in simple terms.`)}
-                    >
-                      {course}
-                    </a>
-                  ))}
-              </div>
-            ))}
-
-          {/* Contact */}
-          <div style={{ paddingTop: "10px", borderTop: "1px solid #eee" }}>
-            <a href="https://wa.me/231777789356" target="_blank" style={{ color: "white", background: "#25D366", padding: "8px 14px", borderRadius: "6px", display: "inline-block", marginBottom: "6px", textDecoration: "none" }}>
-              💬 Contact Me on WhatsApp
-            </a>
-            <br />
-            <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank" style={{ color: "white", background: "#1877F2", padding: "8px 14px", borderRadius: "6px", display: "inline-block", textDecoration: "none" }}>
-              📘 Follow Me on Facebook / Hire Me
-            </a>
+        {!user ? (
+          <div className="login-container">
+            <h1>Welcome to ASKAI</h1>
+            <p>Sign in with Google to save your chats and get personalized help.</p>
+            <button onClick={handleGoogleLogin} className="google-btn">
+              Sign in with Google
+            </button>
           </div>
-        </div>
-
-        {/* Chat Area */}
-        <div className="chat" ref={chatRef}>
-          {messages.map((msg, idx) => (
-            <div key={idx} className={`msg ${msg.type}`}>
-              {msg.text.split("\n").map((line, i) => <div key={i}>{line}</div>)}
+        ) : (
+          <>
+            {/* Header */}
+            <div className="header">
+              <h1>ASKAI</h1>
+              <button onClick={handleLogout} className="logout-btn">
+                Logout
+              </button>
             </div>
-          ))}
-        </div>
 
-        {/* Input */}
-        <div className="input">
-          <textarea
-            placeholder="Ask me anything..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage(input);
-                setInput("");
-              }
-            }}
-          />
-          <button onClick={() => { sendMessage(input); setInput(""); }}>Send</button>
-        </div>
+            {/* Side Menu */}
+            <div className={`menu ${openMenu ? "open" : ""}`}>
+              <button className="menu-toggle" onClick={() => setOpenMenu(!openMenu)}>
+                ☰ Menu
+              </button>
+              {Object.keys(resources).map((category) => (
+                <div key={category}>
+                  <a
+                    href="#!"
+                    onClick={() => toggleSubmenu(category)}
+                    className="category-link"
+                  >
+                    {category} {openSubmenu[category] ? "▲" : "▼"}
+                  </a>
+                  {openSubmenu[category] &&
+                    resources[category].map((item) => (
+                      <a
+                        key={item.name}
+                        href={item.url}
+                        target="_blank"
+                        style={{ paddingLeft: "15px", display: "block" }}
+                      >
+                        {item.name}
+                      </a>
+                    ))}
+                </div>
+              ))}
+            </div>
 
-        {/* Footer */}
-        <div className="footer">
-          Created by <strong>Akin S. Sokpah</strong> from Liberia 🇱🇷 |{" "}
-          <a href="https://www.facebook.com/profile.php?id=61583456361691" target="_blank">Facebook</a>
-        </div>
+            {/* Chat Area */}
+            <div className="chat" ref={chatRef}>
+              {messages.map((msg, idx) => (
+                <div key={idx} className={`msg ${msg.type}`}>
+                  {msg.text.split("\n").map((line, i) => (
+                    <div key={i}>{line}</div>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            {/* Input */}
+            <div className="input">
+              <textarea
+                placeholder="Ask me anything..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage(input);
+                    setInput("");
+                  }
+                }}
+              />
+              <button
+                onClick={() => {
+                  sendMessage(input);
+                  setInput("");
+                }}
+              >
+                Send
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
-      {/* CSS */}
       <style jsx>{`
-        .app { display: flex; flex-direction: column; height: 100vh; font-family: Arial, sans-serif; }
-        .header { background: #0a74da; color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; }
-        .menu-btn { cursor: pointer; }
-        .menu { display: none; flex-direction: column; background: #f0f0f0; padding: 10px; }
-        .menu a { text-decoration: none; padding: 5px 0; color: #333; display: block; }
-        .chat { flex: 1; overflow-y: auto; padding: 10px; background: #e8e8e8; }
-        .msg.ai { color: #0a74da; margin-bottom: 10px; }
-        .msg.user { color: #000; margin-bottom: 10px; text-align: right; }
-        .input { display: flex; padding: 10px; background: #ddd; }
-        .input textarea { flex: 1; padding: 8px; resize: none; border-radius: 4px; border: 1px solid #aaa; }
-        .input button { margin-left: 5px; padding: 8px 12px; border: none; background: #0a74da; color: white; border-radius: 4px; cursor: pointer; }
-        .footer { padding: 5px 10px; text-align: center; background: #f0f0f0; font-size: 0.9rem; }
+        .app {
+          font-family: Arial, sans-serif;
+          display: flex;
+          flex-direction: column;
+          height: 100vh;
+        }
+        .login-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
+        }
+        .google-btn {
+          background: #4285f4;
+          color: white;
+          border: none;
+          padding: 12px 20px;
+          border-radius: 8px;
+          font-size: 1rem;
+          cursor: pointer;
+        }
+        .header {
+          display: flex;
+          justify-content: space-between;
+          padding: 10px 15px;
+          background: #0a74da;
+          color: white;
+          align-items: center;
+        }
+        .logout-btn {
+          background: #ff4b5c;
+          color: white;
+          padding: 6px 12px;
+          border-radius: 6px;
+          border: none;
+          cursor: pointer;
+        }
+        .menu {
+          background: #f0f0f0;
+          padding: 10px;
+          display: none;
+          flex-direction: column;
+          max-height: 400px;
+          overflow-y: auto;
+        }
+        .menu.open {
+          display: flex;
+        }
+        .menu-toggle {
+          background: #0a74da;
+          color: white;
+          border: none;
+          padding: 6px 10px;
+          border-radius: 4px;
+          cursor: pointer;
+          margin-bottom: 8px;
+        }
+        .category-link {
+          font-weight: bold;
+          display: block;
+          cursor: pointer;
+          margin: 5px 0;
+        }
+        .chat {
+          flex: 1;
+          padding: 10px;
+          overflow-y: auto;
+          background: #e8e8e8;
+        }
+        .msg.ai {
+          color: #0a74da;
+          margin-bottom: 10px;
+        }
+        .msg.user {
+          color: #000;
+          margin-bottom: 10px;
+          text-align: right;
+        }
+        .input {
+          display: flex;
+          padding: 10px;
+          background: #ddd;
+        }
+        .input textarea {
+          flex: 1;
+          padding: 8px;
+          resize: none;
+          border-radius: 4px;
+          border: 1px solid #aaa;
+        }
+        .input button {
+          margin-left: 5px;
+          padding: 8px 12px;
+          border: none;
+          background: #0a74da;
+          color: white;
+          border-radius: 4px;
+          cursor: pointer;
+        }
       `}</style>
     </>
   );
