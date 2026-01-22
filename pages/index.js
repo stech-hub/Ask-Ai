@@ -4,10 +4,7 @@ import Head from "next/head";
 
 export default function Home() {
   const [messages, setMessages] = useState([
-    {
-      type: "ai",
-      text: "👋 Welcome to ASKAI!\nYour intelligent assistant for learning, productivity, and coding.",
-    },
+    { type: "ai", text: "👋 Welcome to ASKAI!\nYour intelligent assistant for learning, productivity, and coding." },
   ]);
   const [input, setInput] = useState("");
   const chatRef = useRef();
@@ -62,8 +59,9 @@ export default function Home() {
 
   // Send message to API
   const sendMessage = async (msg) => {
-    if (!msg?.trim()) return;
+    if (!msg.trim()) return;
 
+    // Show user message immediately
     const newMessages = [...messages, { type: "user", text: msg }];
     setMessages(newMessages);
 
@@ -76,20 +74,14 @@ export default function Home() {
 
       const data = await res.json();
 
-      if (!data.message) {
-        throw new Error("API returned empty message");
-      }
-
-      setMessages([...newMessages, { type: "ai", text: data.message }]);
+      // Show AI response
+      setMessages([...newMessages, { type: "ai", text: data.message || "⚠️ AI is temporarily unavailable." }]);
     } catch (err) {
-      console.error("Chat error:", err);
-      setMessages([
-        ...newMessages,
-        { type: "ai", text: "⚠️ AI is temporarily unavailable. Please try again in a moment." },
-      ]);
+      setMessages([...newMessages, { type: "ai", text: "⚠️ AI is temporarily unavailable. Please try again later." }]);
     }
   };
 
+  // Auto-scroll chat
   useEffect(() => {
     chatRef.current.scrollTop = chatRef.current.scrollHeight;
   }, [messages]);
@@ -103,14 +95,6 @@ export default function Home() {
     <>
       <Head>
         <title>ASKAI – AI Assistant & Learning Platform</title>
-        <meta
-          name="description"
-          content="ASKAI is your free AI learning assistant. Chat with AI for coding help, access CS courses, find scholarships, jobs, and download the ASKAI app in Liberia and worldwide."
-        />
-        <meta
-          name="keywords"
-          content="ASKAI AI assistant, ASKAI learning platform, ASKAI coding help, ASKAI Liberia, ASKAI CS courses, free AI learning assistant for students, ask AI for coding help online, Liberia online scholarships and jobs, download ASKAI app Liberia, AI assistant for learning and productivity, AskAI, Ask AI"
-        />
       </Head>
 
       <div className="app">
@@ -181,13 +165,18 @@ export default function Home() {
 
         {/* Input */}
         <div className="input">
-          <textarea placeholder="Ask me anything..." value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              sendMessage(input);
-              setInput("");
-            }
-          }}/>
+          <textarea
+            placeholder="Ask me anything..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage(input);
+                setInput("");
+              }
+            }}
+          />
           <button onClick={() => { sendMessage(input); setInput(""); }}>Send</button>
         </div>
 
@@ -215,4 +204,4 @@ export default function Home() {
       `}</style>
     </>
   );
-            }
+}
