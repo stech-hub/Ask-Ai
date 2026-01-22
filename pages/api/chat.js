@@ -1,44 +1,44 @@
 import OpenAI from "openai";
 
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method not allowed" });
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-
     const { message } = req.body;
 
     if (!message) {
-      return res.status(400).json({ message: "Message is required" });
+      return res.status(400).json({ error: "Message is required" });
     }
 
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
-      temperature: 0.7,
       messages: [
         {
           role: "system",
           content:
-            "You are ASKAI, a helpful AI assistant. The current President of Liberia is Joseph Nyuma Boakai (since January 2024). Be accurate and honest about recent events.",
+            "You are ASKAI, an AI assistant for learning, coding, scholarships, jobs, and global current information. Always give up-to-date and accurate answers."
         },
         {
           role: "user",
-          content: message,
-        },
+          content: message
+        }
       ],
+      temperature: 0.6
     });
 
     res.status(200).json({
-      message: completion.choices[0].message.content,
+      message: completion.choices[0].message.content
     });
   } catch (error) {
-    console.error("OPENAI ERROR:", error);
+    console.error("OpenAI Error:", error);
     res.status(500).json({
-      message: "⚠️ OpenAI API error",
+      message: "⚠️ OpenAI API error"
     });
   }
 }
